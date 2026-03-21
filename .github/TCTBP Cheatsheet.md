@@ -87,6 +87,12 @@ Attempts to:
 - push relevant tags when appropriate
 - confirm that you are positioned back on the resumed work branch with local and remote in sync
 
+Notes:
+
+- Ends with a concise four-column table: `Origin`, `Local`, `Status`, `Action(s)`
+- Keep the handover table to five rows focused on branch sync, latest tag, metadata branch publication, metadata consistency, and final baseline state
+- Use a short completion line after the table to confirm the handed-over branch and commit
+
 Use when:
 
 - you are finishing work on one machine

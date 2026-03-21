@@ -99,6 +99,20 @@
     ],
     "comment": "For status, render the fuller local-versus-origin operator snapshot. Include the current branch, default branch, tags, ahead/behind state, and handover relevance. Use 'n/a' where no meaningful origin-side value exists."
   },
+  "handoverReport": {
+    "enabled": true,
+    "stage": "summary",
+    "format": "table",
+    "columns": ["Origin", "Local", "Status", "Action(s)"],
+    "recommendedRows": [
+      "target-branch-state",
+      "last-shipped-tag",
+      "metadata-branch-state",
+      "metadata-consistency",
+      "handover-baseline"
+    ],
+    "comment": "At the end of handover, render a concise five-row summary table that confirms the target branch, tag state, metadata branch publication, metadata consistency, and clean synced baseline. Keep it shorter than status and focused on the handover result."
+  },
   "branch": {
     "enabled": true,
     "purpose": "Safely close out the current branch, reconcile the default branch, and create the next work branch without losing code.",

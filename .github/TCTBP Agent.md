@@ -262,7 +262,32 @@ Behaviour, safe and deterministic:
    Confirm the local target branch matches `origin/<target-branch>`. Confirm the metadata branch reflects the same target branch and handed-over commit. Confirm the local default branch is not known to be behind `origin/<default-branch>` after fetch. Confirm the working directory is still on the intended target branch. If sync cannot be verified, stop and report the discrepancy.
 
 16. **Summary**
-   Summarise target branch, upstream status, commits created, tests run, documentation review result, reconciliation result, and pushes performed. Explicitly confirm whether you are now positioned on the resumed work branch and whether local and remote are in sync. Explicitly note that handover covered the active work branch, the handover metadata branch, and relevant tags only, not every branch in the repository.
+   Render a concise four-column summary table using `Origin`, `Local`, `Status`, and `Action(s)`. Keep the table shorter than `status` and focused on the handover outcome. After the table, add a one-line completion summary that confirms the target branch, handed-over commit, version when relevant, and latest tag when relevant. Explicitly note that handover covered the active work branch, the handover metadata branch, and relevant tags only, not every branch in the repository.
+
+Required HANDOVER summary columns:
+
+- `Origin`: the published remote-side value for the row, or `n/a`
+- `Local`: the local-side value for the row
+- `Status`: concise interpretation of the comparison
+- `Action(s)`: the next concrete handover action, or `none` when complete
+
+Recommended HANDOVER summary rows:
+
+| Row                   | Origin                             | Local                             | Status                           | Action(s)                        |
+| --------------------- | ---------------------------------- | --------------------------------- | -------------------------------- | -------------------------------- |
+| Target branch state   | `origin/<target-branch>` SHA       | local `<target-branch>` SHA       | synced, published, or blocked    | none, push, or stop              |
+| Last shipped tag      | latest remote tag or `n/a`         | latest local tag or `n/a`         | aligned, missing, or drifted     | none, push tag, or inspect       |
+| Metadata branch state | `origin/tctbp/handover-state` SHA  | local metadata SHA or pending     | published, pending, or missing   | none, push metadata, or stop     |
+| Metadata consistency  | metadata branch commit/tag/version | current branch commit/tag/version | consistent, stale, or mismatched | none, rerun handover, or inspect |
+| Handover baseline     | expected remote sync baseline      | current tree and tracking state   | complete, partial, or blocked    | none, clean up, or stop          |
+
+HANDOVER summary rules:
+
+- Keep the table to five rows unless a guard rail failure requires one extra blocker row.
+- Prefer published outcome over process narration.
+- Use `n/a` when a row has no meaningful origin-side value.
+- `Status` should be diagnostic, not narrative.
+- `Action(s)` should resolve to `none` on a successful handover.
 
 Approval rules:
 
