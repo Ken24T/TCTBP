@@ -1,7 +1,7 @@
 {
-  "branch": "infrastructure/triggers-review",
-  "commit": "50836cb0dbeeccbd1092de2c194db3bc1d42f54f",
-  "updatedAt": "2026-03-21T06:53:24Z",
+  "branch": "chore/harden-template-validation",
+  "commit": "9337e3847c1178d6a7f4680765b5bdb4205fd414",
+  "updatedAt": "2026-03-22T00:56:43Z",
   "version": "0.1.1",
   "tag": "v0.1.1"
 }
