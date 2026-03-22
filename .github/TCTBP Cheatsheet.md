@@ -23,7 +23,7 @@ Repo gates for this repository:
 
 ## Triggers
 
-### `ship` / `ship please` / `shipping` / `tctbp` / `prepare release`
+### `ship` / `ship please` / `shipping` / `prepare release`
 
 Purpose:
 Formal source release workflow.
@@ -53,6 +53,8 @@ Notes:
 - Uses the normal build gate by default, not the release build
 - Patch bump happens on every ship unless the changes are docs-only or infrastructure-only
 - Release build is reserved for installation or deployment scenarios
+- Stops if the branch is dirty, missing an upstream, behind origin, or diverged from origin
+- Does not treat a bare `tctbp` request as permission to mutate repository state
 
 ### `handover` / `handover please`
 
@@ -76,8 +78,9 @@ Handover metadata:
 Attempts to:
 
 - preserve dirty work on the active branch when needed
+- create a durable checkpoint for dirty unpublished work before verification can strand it on one machine
 - fetch and inspect remote state
-- consult the handover metadata branch first when you are on the wrong branch or on `main`
+- prefer the handover metadata branch over an arbitrary clean non-default branch when metadata is newer and valid
 - fall back to branch detection only when metadata is missing, stale, or invalid
 - ask for confirmation before switching if branch choice is ambiguous
 - check out the target branch when safe
@@ -92,6 +95,7 @@ Notes:
 - Ends with a concise four-column table: `Origin`, `Local`, `Status`, `Action(s)`
 - Keep the handover table to five rows focused on branch sync, latest tag, metadata branch publication, metadata consistency, and final baseline state
 - Use a short completion line after the table to confirm the handed-over branch and commit
+- Update the metadata branch using a secondary worktree or another equally non-destructive method
 
 Use when:
 
@@ -161,6 +165,14 @@ Use when:
 
 - a prior workflow stopped part-way through
 - version, tag, merge, or push state looks inconsistent
+- branch publication and handover metadata disagree
+- a version bump, changelog update, or tag exists without the rest of the release state
+
+Recovery expectations:
+
+- inspect concrete partial states before proposing action
+- preserve unpublished work before cleanup when needed
+- never rewrite history or force-push without explicit extra confirmation
 
 ### `branch <new-branch-name>`
 
