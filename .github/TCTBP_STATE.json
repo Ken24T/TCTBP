@@ -1,7 +1,7 @@
 {
-  "branch": "test/scenario-testing",
-  "commit": "2cc6046774f83068b673e5fa7e884d05139dd7c7",
-  "updatedAt": "2026-03-22T02:32:13Z",
+  "branch": "infrastructure/triggers-review",
+  "commit": "50836cb0dbeeccbd1092de2c194db3bc1d42f54f",
+  "updatedAt": "2026-03-22T02:36:45Z",
   "version": "0.1.1",
   "tag": "v0.1.1"
 }
