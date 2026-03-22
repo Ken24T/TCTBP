@@ -24,6 +24,8 @@ The TCTBP template set is defined by:
 
 When these files change, keep them aligned. Avoid duplicating logic in one file that contradicts another.
 
+Reusable helper prompts for downstream use live in `.github/prompts/`. Keep them aligned with the current template workflow and update them when the onboarding or migration process changes.
+
 ## Template Design Rules
 
 Use these rules whenever you edit or extend the template set.
@@ -101,5 +103,8 @@ For mutating workflows, keep detached-HEAD stop conditions, branch-name validati
 - Prefer small, focused edits over broad rewrites.
 - Keep the files copyable into a fresh repository with minimal follow-up changes.
 - Add or update examples only when they clarify how a downstream repository should fill in the template.
+- Keep both prompt files current when the recommended onboarding or migration workflow changes:
+	- `.github/prompts/Onboard New Repository.prompt.md`
+	- `.github/prompts/Update Existing Repository From TCTBP.prompt.md`
 - Document any schema change in both the JSON profile and the surrounding Markdown guidance.
 - Preserve Australian English only where the downstream repository explicitly chooses it; do not assume a locale by default.
