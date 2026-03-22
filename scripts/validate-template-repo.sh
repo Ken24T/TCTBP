@@ -35,9 +35,17 @@ grep -q "# TCTBP Template Repository" README.md || {
   exit 1
 }
 
-grep -q '"templateMode": false' .github/TCTBP.json || {
+if ! python3 - <<'PY'
+import json
+from pathlib import Path
+
+profile = json.loads(Path('.github/TCTBP.json').read_text())
+if profile.get('governance', {}).get('templateMode') is not False:
+    raise SystemExit(1)
+PY
+then
   echo "TCTBP.json must be in live profile mode for this repository" >&2
   exit 1
-}
+fi
 
 echo "Template repository validation passed."

@@ -1,4 +1,4 @@
-# OpenCode TCTBP Agent Template
+# TCTBP Agent Template
 
 ## Purpose
 
