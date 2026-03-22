@@ -113,6 +113,9 @@ Behaviour, local-first and no-code-loss:
 
 1. **Preflight**
    - Report the current branch, working tree state, and upstream tracking state if one exists.
+   - Stop immediately if `HEAD` is detached; branch closeout must operate on a named branch.
+   - Validate the requested branch name before doing any other workflow step.
+   - Stop if the requested branch name is invalid, equals the default branch, already exists locally, already exists on origin, or would collide by case on a case-insensitive filesystem.
    - Determine whether the current branch is the default branch or a non-default work branch.
 
 2. **Assess whether SHIP is needed on the current branch**
@@ -201,6 +204,7 @@ Behaviour, safe and deterministic:
    - Report current branch explicitly.
    - Confirm working tree state.
    - Confirm upstream tracking status if one exists.
+   - Stop immediately if `HEAD` is detached; handover metadata must point at a named branch, not an anonymous commit.
 
 2. **Dirty tree decision**
    - If the working tree has local changes on the active work branch, stay on that branch and preserve the changes through the workflow.
@@ -219,7 +223,7 @@ Behaviour, safe and deterministic:
 5. **Determine the target work branch**
    - Use this precedence order:
      1. If the current branch is non-default and has uncommitted changes, it is the target branch.
-     2. If handover metadata resolves to a valid remote work branch, use that as the target branch unless the current clean non-default branch is confirmed to be newer and already aligned with the intended remote work branch.
+   2. If handover metadata resolves to a valid remote work branch, use that as the target branch unless the current clean non-default branch is proven newer by branch ancestry.
      3. If the current branch is non-default, clean, and already tracks the intended remote work branch, it remains the target branch.
      4. Otherwise inspect remote branches sorted by most recent commit, excluding `origin/<default-branch>`, `origin/HEAD`, and `origin/tctbp/handover-state`.
    - If a single remote work branch is the clear candidate, propose it as the target branch.
@@ -227,6 +231,7 @@ Behaviour, safe and deterministic:
    - If multiple plausible candidate work branches exist, stop and ask the user which branch to resume.
    - If no suitable target branch exists, remain on the current branch and report that no resume branch was detected.
    - Do not let an arbitrary clean non-default branch override newer valid handover metadata just because it is currently checked out.
+   - "Confirmed newer" means the current branch tip is a descendant of the metadata commit and therefore contains that handed-over state plus additional commits. Recency by checkout time, branch name, or local intuition is not enough.
 
 6. **Switch to the target branch when needed**
    - If not already on the confirmed target branch and the tree is clean, checkout the target branch and set up tracking if required.
@@ -321,6 +326,7 @@ Behaviour:
    - Render a concise four-column snapshot table.
    - Use the columns `Origin`, `Local`, `Status`, and `Action(s)`.
    - Include the current branch, default branch, working tree, version, tag state, ahead/behind state, and whether `ship` or `handover` is recommended.
+   - If handover metadata points at a different published branch than the current clean branch, call that out explicitly as a resume-target mismatch, not merely generic metadata staleness.
 
 Required STATUS snapshot columns:
 
@@ -364,7 +370,7 @@ Behaviour:
 1. **Inspect state**
    - Report current branch, working tree, last commit, last tag, and any in-progress merge state.
    - Identify whether a partial operation is in progress.
-   - Check specifically for: version bumped without tag, tag created but not pushed, target branch pushed while handover metadata is stale, metadata updated while the target branch is unpublished, merge in progress, changelog updated without a matching version bump, and local-versus-remote tag drift.
+   - Check specifically for: version bumped without tag, tag created but not pushed, target branch pushed while handover metadata is stale, metadata updated while the target branch is unpublished, `main` pushed while the new branch is unpublished, the new branch pushed while `main` is unpublished, old remote branch deleted before branch transition is fully published, merge in progress, changelog updated without a matching version bump, and local-versus-remote tag drift.
 
 2. **Propose recovery**
    - List specific recovery actions with consequences.
@@ -395,6 +401,7 @@ Behaviour, repo-specific and controlled:
 
 1. **Preflight**
    - Confirm current branch, working tree state, and working directory.
+   - Stop immediately if `HEAD` is detached; deployment must be tied to a named branch or an explicitly approved commit reference.
    - Confirm the configured deployment target profile from `TCTBP.json`.
    - Confirm whether deployment requires a clean and synced branch before continuing.
 
@@ -418,6 +425,7 @@ Behaviour, repo-specific and controlled:
 6. **Preserve existing runtime when practical**
    - Use the repo's install workflow rather than ad hoc copy commands.
    - Do not remove the existing runtime first unless the repo profile explicitly requires it.
+   - If the deploy path would overwrite the only known-good runtime and no rollback plan or replacement strategy is defined, stop.
 
 7. **Deploy target steps**
    - Execute the configured install or publish commands for the selected target.
@@ -449,6 +457,7 @@ Approval rules:
 - Confirm current branch
 - Confirm working tree state
 - Confirm correct working directory
+- Stop immediately if `HEAD` is detached; releases must be anchored to a named branch.
 - Fetch origin state when needed so the report uses current remote information.
 - Render a concise four-column release snapshot table before taking any mutating SHIP action.
 - Stop if the working tree is dirty, if the branch has no upstream, if the branch is behind origin, or if local and remote have diverged.
@@ -567,13 +576,7 @@ A release build is only performed when the user explicitly requests it or when t
 
 - Push current branch only
 - Never push to protected branches
-
-SHIP preflight stop conditions are mandatory:
-
-- Stop if the current branch has no upstream unless repo policy explicitly allows shipping from an unpublished branch.
-- Stop if the current branch is behind its upstream.
-- Stop if the current branch has diverged from its upstream.
-- Stop if the tree is dirty or the release base is otherwise ambiguous.
+- Preserve the preflight guard rails from Step 1; push must not proceed if release state became unpublished, behind upstream, diverged, dirty, or otherwise ambiguous.
 
 ---
 

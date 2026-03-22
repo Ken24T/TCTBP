@@ -1,5 +1,5 @@
 {
-  "schemaVersion": 6,
+  "schemaVersion": 7,
   "governance": {
     "sourceOfTruth": "TCTBP.json",
     "fallbackDocument": "TCTBP Agent.md",
@@ -50,12 +50,17 @@
     "caseInsensitive": true,
     "branchCommand": {
       "enabled": true,
-      "pattern": "^branch\\s+(.+)$"
+      "pattern": "^branch\\s+(.+)$",
+      "stopIfTargetBranchExistsLocal": true,
+      "stopIfTargetBranchExistsRemote": true,
+      "stopIfTargetBranchEqualsDefault": true,
+      "stopIfTargetBranchInvalid": true
     }
   },
   "ship": {
     "preferredTriggers": ["ship", "ship please", "shipping", "prepare release"],
     "requireFetchedOriginInPreflight": true,
+    "stopIfDetachedHead": true,
     "stopIfBranchMissingUpstream": true,
     "allowShipFromUnpublishedBranch": false,
     "stopIfBranchBehindUpstream": true,
@@ -126,6 +131,12 @@
     "enabled": true,
     "purpose": "Safely close out the current branch, reconcile the default branch, and create the next work branch without losing code.",
     "defaultBranch": "main",
+    "stopIfDetachedHead": true,
+    "validateTargetBranchNameBeforeWorkflow": true,
+    "stopIfTargetBranchExistsLocal": true,
+    "stopIfTargetBranchExistsRemote": true,
+    "stopIfTargetBranchEqualsDefault": true,
+    "stopIfTargetBranchInvalid": true,
     "requiresCleanTreeBeforeSwitch": true,
     "stopIfDirtyAndShipDeclined": true,
     "stopIfSourceBranchAheadOfUpstream": true,
@@ -153,8 +164,10 @@
     "syncScope": "active-work-branch-plus-handover-metadata-and-relevant-tags",
     "metadataBranch": "tctbp/handover-state",
     "metadataFile": ".github/TCTBP_STATE.json",
+    "stopIfDetachedHead": true,
     "consultMetadataBranchBeforeBranchInference": true,
     "preferMetadataOverCleanNonDefaultBranch": true,
+    "currentBranchMayOverrideMetadataOnlyWhenDescendantOfMetadataCommit": true,
     "updateMetadataBranchOnSuccessfulHandover": true,
     "metadataBranchUpdateStrategy": "secondary-worktree",
     "excludeBranchesFromCandidateDetection": ["origin/main", "origin/HEAD", "origin/tctbp/handover-state"],
@@ -184,6 +197,9 @@
       "tag-created-not-pushed",
       "branch-pushed-metadata-stale",
       "metadata-pushed-branch-unpublished",
+      "main-pushed-new-branch-unpublished",
+      "new-branch-pushed-main-unpublished",
+      "old-remote-branch-deleted-before-transition-complete",
       "merge-in-progress",
       "changelog-updated-without-version-bump",
       "local-remote-tag-drift"
@@ -194,7 +210,7 @@
     "enabled": true,
     "suggestions": ["handover", "ship", "abort", "none"],
     "rules": {
-      "handover": "Suggest when the active work branch is dirty, ahead or behind origin, must be resumed on this machine, the handover metadata branch should be refreshed, or local and remote sync of that branch should be verified before stopping or resuming work.",
+      "handover": "Suggest when the active work branch is dirty, ahead or behind origin, must be resumed on this machine, the handover metadata branch should be refreshed, local and remote sync of that branch should be verified before stopping or resuming work, or the metadata currently points another machine at the wrong branch.",
       "ship": "Suggest when there are unshipped commits since the last tag or version and tag drift exists.",
       "abort": "Suggest when a partial workflow state is detected.",
       "none": "Suggest when branch state is clean, synced, and no SHIP or handover is needed."
@@ -249,9 +265,11 @@
   "deploy": {
     "preferredTriggers": ["deploy", "deploy please"],
     "purpose": "This repository does not have a runtime deployment target. Deploy should stop unless a future repo-specific deploy profile is added.",
+    "stopIfDetachedHead": true,
     "requireCleanTree": true,
     "requireSyncedBranch": true,
     "requireShipFirst": false,
+    "requireRollbackPlanForDestructiveDeploy": true,
     "buildCommand": null,
     "migrationCommand": null,
     "targets": {}

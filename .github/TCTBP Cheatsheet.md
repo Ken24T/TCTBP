@@ -54,12 +54,13 @@ Notes:
 - Patch bump happens on every ship unless the changes are docs-only or infrastructure-only
 - Release build is reserved for installation or deployment scenarios
 - Stops if the branch is dirty, missing an upstream, behind origin, or diverged from origin
+- Stops if `HEAD` is detached
 - Does not treat a bare `tctbp` request as permission to mutate repository state
 
 ### `handover` / `handover please`
 
 Purpose:
-Safely reconcile the working branch with `origin` so you can stop on one machine and resume on another from the latest validated shared state.
+Safely reconcile the working branch with `origin` so you can stop on one machine and resume on another from the latest safely recoverable shared state.
 
 Scope:
 
@@ -96,6 +97,7 @@ Notes:
 - Keep the handover table to five rows focused on branch sync, latest tag, metadata branch publication, metadata consistency, and final baseline state
 - Use a short completion line after the table to confirm the handed-over branch and commit
 - Update the metadata branch using a secondary worktree or another equally non-destructive method
+- Stops if `HEAD` is detached
 
 Use when:
 
@@ -142,6 +144,11 @@ Current deploy policy:
 - `requireShipFirst: false`
 - `migrationCommand: null`
 
+Deploy guard rails:
+
+- detached `HEAD` should stop deploy
+- destructive replacement without rollback expectations should stop deploy
+
 ### `status` / `status please`
 
 Purpose:
@@ -155,6 +162,7 @@ Notes:
 
 - This is the trigger that should show the fuller four-column table: `Origin`, `Local`, `Status`, `Action(s)`
 - Table should explicitly include branch state, default-branch state, tag state, ahead/behind counts, working tree, and whether `ship` or `handover` is recommended
+- If metadata points another machine at the wrong published branch, call that out as a resume-target mismatch
 
 ### `abort`
 
@@ -167,6 +175,7 @@ Use when:
 - version, tag, merge, or push state looks inconsistent
 - branch publication and handover metadata disagree
 - a version bump, changelog update, or tag exists without the rest of the release state
+- `main` and a newly created branch are only partially published after a branch workflow
 
 Recovery expectations:
 
@@ -182,6 +191,8 @@ Close out current work cleanly and start the next branch.
 Attempts to:
 
 - assess whether the current branch should be shipped first
+- stop if `HEAD` is detached
+- stop if the requested new branch name is invalid or already exists locally or remotely
 - stop instead of switching if the current branch is dirty and SHIP is declined
 - stop instead of guessing if the source branch or local `main` is diverged
 - stop if the source branch is ahead, behind, or otherwise not yet synced to its upstream
