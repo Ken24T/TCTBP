@@ -460,8 +460,9 @@ Approval rules:
 - Stop immediately if `HEAD` is detached; releases must be anchored to a named branch.
 - Fetch origin state when needed so the report uses current remote information.
 - Render a concise four-column release snapshot table before taking any mutating SHIP action.
-- Stop if the working tree is dirty, if the branch has no upstream, if the branch is behind origin, or if local and remote have diverged.
-- Do not create a release from unpublished, stale, or ambiguous branch state.
+- Stop if the working tree is dirty, if the branch is behind origin, or if local and remote have diverged.
+- If the branch has no upstream but is otherwise clean and fetched, SHIP may continue and create the upstream as part of the first publish.
+- Do not create a release from stale, diverged, dirty, or otherwise ambiguous branch state. A clean unpublished branch is acceptable when SHIP is the first publication step.
 
 Required SHIP snapshot columns:
 
@@ -474,7 +475,7 @@ Recommended SHIP snapshot rows:
 
 | Row                  | Origin                                        | Local                                | Status                                         | Action(s)                              |
 | -------------------- | --------------------------------------------- | ------------------------------------ | ---------------------------------------------- | -------------------------------------- |
-| Branch and upstream  | tracked remote branch or `n/a`                | current branch and upstream          | tracking, missing-upstream, or mismatch        | continue, set upstream, or stop        |
+| Branch and upstream  | tracked remote branch or `n/a`                | current branch and upstream          | tracking, first-publish, or mismatch           | continue, create upstream, or stop     |
 | Head commit          | `origin/<branch>` SHA or `n/a`                | local HEAD SHA                       | in sync, ahead, behind, diverged, unpublished  | continue, stop, or recommend sync      |
 | Last shipped tag     | latest reachable remote tag or `n/a`          | latest reachable local tag or `n/a`  | aligned, missing, or drifted                   | continue, create tag, or investigate   |
 | Commits ahead/behind | remote commit count context                   | local ahead/behind counts            | synced, ahead, behind, or diverged             | continue, push later, or stop          |
@@ -576,7 +577,7 @@ A release build is only performed when the user explicitly requests it or when t
 
 - Push current branch only
 - Never push to protected branches
-- Preserve the preflight guard rails from Step 1; push must not proceed if release state became unpublished, behind upstream, diverged, dirty, or otherwise ambiguous.
+- Preserve the preflight guard rails from Step 1; push must not proceed if release state became behind upstream, diverged, dirty, or otherwise ambiguous. If the branch is still unpublished at this stage, create the upstream during this first push rather than stopping.
 
 ---
 

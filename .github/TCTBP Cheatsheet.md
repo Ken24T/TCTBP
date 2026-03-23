@@ -53,7 +53,8 @@ Notes:
 - Uses the normal build gate by default, not the release build
 - Patch bump happens on every ship unless the changes are docs-only or infrastructure-only
 - Release build is reserved for installation or deployment scenarios
-- Stops if the branch is dirty, missing an upstream, behind origin, or diverged from origin
+- Stops if the branch is dirty, behind origin, or diverged from origin
+- May publish a clean branch that has no upstream yet by creating the upstream on the first ship push
 - Stops if `HEAD` is detached
 - Does not treat a bare `tctbp` request as permission to mutate repository state
 

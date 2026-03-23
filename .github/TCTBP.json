@@ -61,12 +61,13 @@
     "preferredTriggers": ["ship", "ship please", "shipping", "prepare release"],
     "requireFetchedOriginInPreflight": true,
     "stopIfDetachedHead": true,
-    "stopIfBranchMissingUpstream": true,
-    "allowShipFromUnpublishedBranch": false,
+    "stopIfBranchMissingUpstream": false,
+    "allowShipFromUnpublishedBranch": true,
+    "createUpstreamOnFirstPublish": true,
     "stopIfBranchBehindUpstream": true,
     "stopIfBranchDiverged": true,
     "stopIfWorkingTreeDirty": true,
-    "purpose": "Create a formal shipped version only from a clean, fetched, synced branch so version, tag, and remote state stay recoverable and unambiguous."
+    "purpose": "Create a formal shipped version from a clean, fetched branch, allowing first-time publication from a clean unpublished branch while keeping version, tag, and remote state recoverable and unambiguous."
   },
   "workflow": {
     "shipOrder": ["preflight", "verify", "problems", "docs-impact", "bump", "commit", "changelog", "tag", "push"],
