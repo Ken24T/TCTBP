@@ -16,6 +16,7 @@ The current template set lives in `.github/`:
 There is also an optional helper prompt in `.github/prompts/`:
 
 - `Onboard New Repository.prompt.md`
+- `Update Existing Repository From TCTBP.prompt.md`
 
 Use these together.
 
@@ -37,6 +38,22 @@ For a brand new project, the simplest workflow is:
 7. Use `.github/prompts/Onboard New Repository.prompt.md` or explicitly ask Copilot to read `.github/copilot-instructions.md` and customise the template files for the new project.
 
 That explicit chat step matters. Do not assume Copilot will automatically infer that the placeholders should be replaced just because the files exist.
+
+## Recommended Use In An Existing Repository
+
+For a repository that already has older or locally customised TCTBP files, do not copy the canonical files over the top blindly.
+
+Instead:
+
+1. Create a dedicated update branch in the recipient repository.
+2. Copy `.github/prompts/Update Existing Repository From TCTBP.prompt.md` into the recipient repository if needed.
+3. Open the recipient repository in VS Code.
+4. Ask Copilot to use that prompt to read the canonical TCTBP files from this repository and compare them with the local workflow files.
+5. Have Copilot merge forward the generic workflow and safety improvements while preserving the recipient repository's repo-specific values, commands, docs paths, deploy settings, and intentional deviations.
+6. Prefer a backup-capable update mode so the recipient repository keeps a non-destructive recovery path before editing.
+7. Review the diff and run the recipient repository's validation steps before merging the update branch.
+
+This repository's migration prompt is designed for exactly that use case: safe forward-merging rather than template overwrite.
 
 ## Recommended Onboarding Model
 
@@ -75,9 +92,30 @@ Typical questions:
 
 The goal of pass 2 is to align the workflow with the repo, while keeping the workflow logic intact.
 
-## Recommended First Copilot Prompt
+## Recommended Prompt Files
 
-The reusable prompt now lives at `.github/prompts/Onboard New Repository.prompt.md`.
+The reusable prompts now live in `.github/prompts/`:
+
+- `Onboard New Repository.prompt.md` for brand new repositories
+- `Update Existing Repository From TCTBP.prompt.md` for existing repositories that need their local TCTBP files merged forward safely
+
+### For New Repositories
+
+The reusable onboarding prompt lives at `.github/prompts/Onboard New Repository.prompt.md`.
+
+### For Existing Repositories
+
+The reusable migration prompt lives at `.github/prompts/Update Existing Repository From TCTBP.prompt.md`.
+
+Use it when a downstream repository already has local TCTBP files and you want Copilot to:
+
+- read the canonical TCTBP files from this repository
+- compare them against the recipient repository's local files
+- create a backup or update branch before editing
+- merge forward generic workflow improvements safely
+- preserve repo-specific instructions instead of overwriting them
+
+### Manual Prompting
 
 If you prefer to paste the text manually in chat, start with a prompt like this:
 
@@ -165,6 +203,6 @@ That means:
 - project commands are defined early
 - docs expectations are defined early
 - release and sync behaviour is defined early
-- future `ship`, `handover`, `deploy`, `status`, `abort`, and `branch` actions have a repo-specific profile to follow
+- future `ship`, `publish`, `handover`, `resume`, `deploy`, `status`, `abort`, and `branch` actions have a repo-specific profile to follow
 
 In practice, this is the cleanest way to onboard Copilot from the start of a new project without making the workflow brittle or overly dependent on a single old repository.

@@ -24,6 +24,8 @@ The TCTBP template set is defined by:
 
 When these files change, keep them aligned. Avoid duplicating logic in one file that contradicts another.
 
+Reusable helper prompts for downstream use live in `.github/prompts/`. Keep them aligned with the current template workflow and update them when the onboarding or migration process changes.
+
 ## Template Design Rules
 
 Use these rules whenever you edit or extend the template set.
@@ -34,7 +36,7 @@ Use these rules whenever you edit or extend the template set.
 4. Prefer configuration over prose when a rule must be machine-readable.
 5. Prefer prose over configuration when a rule depends on judgement or safety context.
 6. Never hard-code a language, framework, packaging tool, or deployment target unless it is clearly marked as an example.
-7. Preserve the no-code-loss guarantees across `ship`, `handover`, `branch`, `deploy`, `status`, and `abort`.
+7. Preserve the no-code-loss guarantees across `ship`, `publish`, `handover`, `resume`, `branch`, `deploy`, `status`, and `abort`.
 
 ## Downstream Customisation Checklist
 
@@ -88,16 +90,23 @@ For TCTBP activation, workflow order, sync safety, docs-impact checks, versionin
 Supported triggers remain:
 
 - `ship`, `ship please`, `shipping`, `prepare release`
+- `publish`, `publish please`
 - `deploy`, `deploy please`
 - `handover`, `handover please`
+- `resume`, `resume please`
 - `status`, `status please`
 - `abort`
 - `branch <new-branch-name>`
+
+For mutating workflows, keep detached-HEAD stop conditions, branch-name validation, publication safety, and handover metadata safety aligned across the JSON profile and Markdown guidance.
 
 ## Editing Guidance
 
 - Prefer small, focused edits over broad rewrites.
 - Keep the files copyable into a fresh repository with minimal follow-up changes.
 - Add or update examples only when they clarify how a downstream repository should fill in the template.
+- Keep both prompt files current when the recommended onboarding or migration workflow changes:
+	- `.github/prompts/Onboard New Repository.prompt.md`
+	- `.github/prompts/Update Existing Repository From TCTBP.prompt.md`
 - Document any schema change in both the JSON profile and the surrounding Markdown guidance.
 - Preserve Australian English only where the downstream repository explicitly chooses it; do not assume a locale by default.

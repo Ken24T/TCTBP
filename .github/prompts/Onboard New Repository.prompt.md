@@ -35,9 +35,10 @@ Customise these files for the new repository:
 3. If a field truly does not apply, remove it cleanly or use `null` only where the template already allows it.
 4. Keep the TCTBP workflow generic, durable, and safe.
 5. Do not hard-code language, framework, package manager, deployment target, or docs paths unless they were explicitly provided.
-6. Preserve the no-code-loss guarantees across `ship`, `handover`, `branch`, `deploy`, `status`, and `abort`.
+6. Preserve the no-code-loss guarantees across `ship`, `publish`, `handover`, `resume`, `branch`, `deploy`, `status`, and `abort`.
 7. Keep the behavioural guidance in Markdown aligned with the machine-readable profile in `.github/TCTBP.json`.
 8. Validate JSON and Markdown after editing.
+9. Keep the trigger semantics distinct: `ship` for formal release, `publish` for safe branch publication without release side effects, `handover` for end-of-day shared-state publication plus metadata refresh, and `resume` for start-of-day restore.
 
 ## What You Must Not Guess
 
@@ -92,6 +93,14 @@ Project details:
 ## Task
 
 Read the TCTBP template files, customise them for this repository using the project details above, and keep the workflow logic consistent across all files.
+
+When adapting the workflow, preserve the intended trigger separation:
+
+- `ship` creates formal release state when the repo wants version and tag semantics
+- `publish` pushes a clean current branch safely without version, tag, or handover metadata side effects
+- `handover` is the end-of-session branch-plus-metadata sync path
+- `resume` is the start-of-session restore path
+- `branch <new-branch-name>` should assume the source branch has already been published or shipped before closeout continues
 
 When you finish:
 
