@@ -205,12 +205,12 @@ Read-only operator snapshot of branch state, sync status, tags, and recommended 
 
 Use when:
 
-- you want to know whether `handover`, `ship`, or `abort` is needed before doing anything else
+- you want to know whether `resume`, `publish`, `handover`, `ship`, or `abort` is needed before doing anything else
 
 Notes:
 
 - This is the trigger that should show the fuller four-column table: `Origin`, `Local`, `Status`, `Action(s)`
-- Table should explicitly include branch state, default-branch state, tag state, ahead/behind counts, working tree, and whether `ship` or `handover` is recommended
+- Table should explicitly include branch state, default-branch state, tag state, ahead/behind counts, working tree, and whether `resume`, `publish`, `ship`, or `handover` is recommended
 - If metadata points another machine at the wrong published branch, call that out as a resume-target mismatch
 
 ### `abort`
