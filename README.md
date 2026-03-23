@@ -117,8 +117,6 @@ Use it when a downstream repository already has local TCTBP files and you want C
 
 ### Manual Prompting
 
-If you prefer to paste the text manually in chat, start with a prompt like this:
-
 In the new repository, start with a prompt like this:
 
 ```text
