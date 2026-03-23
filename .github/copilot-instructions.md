@@ -36,7 +36,7 @@ Use these rules whenever you edit or extend the template set.
 4. Prefer configuration over prose when a rule must be machine-readable.
 5. Prefer prose over configuration when a rule depends on judgement or safety context.
 6. Never hard-code a language, framework, packaging tool, or deployment target unless it is clearly marked as an example.
-7. Preserve the no-code-loss guarantees across `ship`, `handover`, `branch`, `deploy`, `status`, and `abort`.
+7. Preserve the no-code-loss guarantees across `ship`, `publish`, `handover`, `resume`, `branch`, `deploy`, `status`, and `abort`.
 
 ## Downstream Customisation Checklist
 
@@ -90,13 +90,15 @@ For TCTBP activation, workflow order, sync safety, docs-impact checks, versionin
 Supported triggers remain:
 
 - `ship`, `ship please`, `shipping`, `prepare release`
+- `publish`, `publish please`
 - `deploy`, `deploy please`
 - `handover`, `handover please`
+- `resume`, `resume please`
 - `status`, `status please`
 - `abort`
 - `branch <new-branch-name>`
 
-For mutating workflows, keep detached-HEAD stop conditions, branch-name validation, and handover metadata safety aligned across the JSON profile and Markdown guidance.
+For mutating workflows, keep detached-HEAD stop conditions, branch-name validation, publication safety, and handover metadata safety aligned across the JSON profile and Markdown guidance.
 
 ## Editing Guidance
 

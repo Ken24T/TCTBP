@@ -85,9 +85,10 @@ Do not overwrite repo-specific values such as:
 When present in the canonical repository, prefer merging forward improvements such as:
 
 - no-code-loss safeguards
-- status, handover, branch, ship, deploy, and abort workflow clarifications
+- status, publish, handover, resume, branch, ship, deploy, and abort workflow clarifications
 - detached-HEAD stop conditions
 - metadata precedence and resume-target safety rules
+- separation of release, publication, handover, and restore semantics
 - branch-name validation rules
 - partial-state recovery guidance
 - summary-table format consistency
@@ -110,6 +111,7 @@ When present in the canonical repository, prefer merging forward improvements su
 10. If a local divergence weakens no-code-loss, resume safety, or sync safety, call it out explicitly and propose the smallest safe correction.
 11. Validate the updated local files using the recipient repository's available validation, lint, test, or diagnostics steps.
 12. Summarise exactly what was changed, what was preserved, what was backed up, and what still needs human review.
+13. When the local repository adopts the new trigger model, keep `ship`, `publish`, `handover`, and `resume` semantically distinct instead of overloading one workflow with multiple operator intents.
 
 ## What You Must Not Do
 

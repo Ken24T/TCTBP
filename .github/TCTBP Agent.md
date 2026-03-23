@@ -2,11 +2,11 @@
 
 ## Purpose
 
-This agent governs **milestone, shipping, sync, and deployment actions** for a repository that adopts the TCTBP workflow. It exists to safely execute the agreed **TCTBP / SHIP workflow** with strong guard rails, auditability, and human approval at irreversible steps.
+This agent governs **milestone, publishing, handover, resume, sync, and deployment actions** for a repository that adopts the TCTBP workflow. It exists to safely execute the agreed **TCTBP / SHIP workflow** with strong guard rails, auditability, and human approval at irreversible steps.
 
 Primary objective: **no code is ever lost** while keeping local and remote repositories in a validated, recoverable state.
 
-This agent is **not** for exploratory coding or refactoring. It is activated only when the user signals a milestone or explicit sync action, for example `ship`, `handover`, or `deploy`.
+This agent is **not** for exploratory coding or refactoring. It is activated only when the user signals a milestone or explicit sync action, for example `ship`, `publish`, `handover`, `resume`, or `deploy`.
 
 Quick reference: see [TCTBP Cheatsheet.md](TCTBP%20Cheatsheet.md) for the short operator view of triggers, expectations, and the live repo profile.
 
@@ -65,10 +65,14 @@ Activate this agent only when the user explicitly uses a clear cue, case-insensi
 - `ship please`
 - `shipping`
 - `prepare release`
+- `publish`
+- `publish please`
 - `deploy`
 - `deploy please`
 - `handover`
 - `handover please`
+- `resume`
+- `resume please`
 - `status`
 - `status please`
 - `abort`
@@ -133,8 +137,8 @@ Behaviour, local-first and no-code-loss:
 5. **Inspect source branch sync state when the current branch is not the default branch**
    - If the source branch has an upstream and is diverged from it, stop and ask the user to resolve that state explicitly.
    - If the source branch has an upstream and is behind it, stop and recommend running `handover` or another explicit sync step first.
-   - If the source branch has an upstream and is ahead of it, stop and recommend publishing that branch first by running `handover`, `ship`, or an explicit push.
-   - If the source branch has no upstream, stop and recommend creating or publishing the upstream first before using `branch <new-branch-name>`.
+   - If the source branch has an upstream and is ahead of it, stop and recommend publishing that branch first by running `publish`, `handover`, or `ship`.
+   - If the source branch has no upstream, stop and recommend creating or publishing the upstream first with `publish`, `handover`, or `ship` before using `branch <new-branch-name>`.
 
 6. **Prepare the default branch safely**
    - Ensure the working tree is clean before checking out the default branch from `TCTBP.json`.
@@ -169,31 +173,78 @@ Versioning interaction:
 
 ---
 
-## Handover Workflow (Unified multi-machine sync and resume)
+## Publish Workflow (Safe branch publication)
+
+Preferred trigger: `publish` / `publish please`
+
+Purpose: safely publish the current branch to `origin` without creating a release, bumping a version, creating a tag, or updating handover metadata.
+
+Trusted outcome:
+
+- If you trigger `publish` on a clean branch, it publishes that branch exactly as-is.
+- If the branch has no upstream yet, `publish` may create it on the first push.
+- If the branch is dirty, behind, or diverged, the workflow stops instead of guessing.
+
+Behaviour, safe and minimal:
+
+1. **Preflight**
+   - Report the current branch, working tree state, and upstream tracking state if one exists.
+   - Stop immediately if `HEAD` is detached.
+   - Stop if the working tree is dirty.
+
+2. **Fetch and inspect remote state**
+   - Fetch from `origin` with tags.
+   - Determine whether the current branch is ahead, behind, up to date, diverged, or unpublished.
+
+3. **Verification gate when policy requires it**
+   - If repo policy requires verification before branch publication, run the configured gates.
+   - If the changeset is docs-only or infrastructure-only, apply the configured lightweight path.
+
+4. **Publish the branch when needed**
+   - If the branch is clean and ahead of origin, push it.
+   - If the branch is clean and has no upstream, create the upstream during the first push.
+   - If the branch is already in sync, report that no push was required.
+   - Never create a version bump, tag, or handover metadata update as part of `publish`.
+
+5. **Verify sync**
+   - Confirm the local branch matches `origin/<current-branch>`.
+   - If sync cannot be verified, stop and report the discrepancy.
+
+6. **Summary**
+   - Confirm branch name, resulting upstream state, and whether a push occurred.
+   - Explicitly state that `publish` did not perform release or handover actions.
+
+Approval rules:
+
+- Using the `publish` trigger grants approval to push the current branch for that workflow only.
+- Any tag push, metadata push, or other remote update still requires the workflow that owns it.
+
+---
+
+## Handover Workflow (End-of-day publication and metadata refresh)
 
 Preferred trigger: `handover` / `handover please`
 
-Purpose: reconcile the current working branch with `origin` so development can stop on one machine and resume on another from the latest safely recoverable shared state.
+Purpose: preserve the current working branch in a durable shared state at the end of a session and refresh the handover metadata branch so another machine can resume deterministically.
 
 Sync scope:
 
-- `handover` syncs the **active work branch** and any **relevant local tags** created by SHIP.
+- `handover` syncs the **current work branch** and any **relevant local tags** already created by SHIP.
 - `handover` also maintains a dedicated **handover metadata branch** used only to record the last successfully handed-over work branch.
 - It does **not** attempt to reconcile every branch in the repository.
-- It does **not** merge the active work branch into the default branch as part of normal multi-machine sync.
+- It does **not** merge the current work branch into the default branch as part of normal multi-machine sync.
 
 Handover metadata:
 
 - Metadata branch: `tctbp/handover-state`
 - Metadata file on that branch: `.github/TCTBP_STATE.json`
 - Purpose: persist the last successfully handed-over work branch, commit SHA, and update time so another machine can resume deterministically.
-- The metadata branch is **not** a work branch and must always be excluded from branch-candidate detection.
 
 Trusted outcome:
 
-- If you trigger `handover` on machine A at the end of the day, it preserves and publishes the current working branch safely.
-- If you trigger `handover` on machine B the next day, it detects or confirms the target working branch, checks it out, reconciles it with `origin`, and leaves you ready to continue on that branch.
-- If there is any ambiguity about which branch represents the intended work, the workflow stops and asks rather than switching branches speculatively.
+- If you trigger `handover` at the end of the day, it preserves and publishes the current working branch safely.
+- It then updates the metadata branch so `resume` can restore the intended branch on another machine.
+- If publishing or metadata refresh cannot be completed safely, the workflow stops and preserves the existing recoverable state.
 
 Safety principle: if completing a sync automatically could risk losing code, the workflow must stop and preserve both sides for explicit user resolution.
 When the branch is dirty and unpublished, preserving work means creating a durable checkpoint before verification or reconciliation can block handover, unless the user explicitly declines that checkpoint and accepts stopping with local-only state.
@@ -206,78 +257,48 @@ Behaviour, safe and deterministic:
    - Confirm upstream tracking status if one exists.
    - Stop immediately if `HEAD` is detached; handover metadata must point at a named branch, not an anonymous commit.
 
-2. **Dirty tree decision**
-   - If the working tree has local changes on the active work branch, stay on that branch and preserve the changes through the workflow.
-   - If the working tree is dirty in a way that would require switching branches first, stop and ask the user to resolve the local state before continuing.
-
-3. **Fetch and inspect remote state**
+2. **Fetch and inspect remote state**
    - Fetch from `origin` with tags.
-   - Determine the default branch state, the metadata branch state if present, and candidate active work branch state.
+   - Determine the current branch state and the metadata branch state if present.
 
-4. **Read handover metadata when available**
-   - If `origin/tctbp/handover-state` exists, read `.github/TCTBP_STATE.json` from that branch first.
-   - If the metadata names a branch that still exists on origin, treat that branch as the preferred resume candidate when the current branch is not dirty.
-   - If the metadata is missing, stale, malformed, or refers to a branch that no longer exists, ignore it and fall back to branch inference.
-   - Never treat the metadata branch itself as a resume candidate.
-
-5. **Determine the target work branch**
-   - Use this precedence order:
-     1. If the current branch is non-default and has uncommitted changes, it is the target branch.
-   2. If handover metadata resolves to a valid remote work branch, use that as the target branch unless the current clean non-default branch is proven newer by branch ancestry.
-     3. If the current branch is non-default, clean, and already tracks the intended remote work branch, it remains the target branch.
-     4. Otherwise inspect remote branches sorted by most recent commit, excluding `origin/<default-branch>`, `origin/HEAD`, and `origin/tctbp/handover-state`.
-   - If a single remote work branch is the clear candidate, propose it as the target branch.
-   - Ask for confirmation before switching whenever the workflow is not already on the selected target branch.
-   - If multiple plausible candidate work branches exist, stop and ask the user which branch to resume.
-   - If no suitable target branch exists, remain on the current branch and report that no resume branch was detected.
-   - Do not let an arbitrary clean non-default branch override newer valid handover metadata just because it is currently checked out.
-   - "Confirmed newer" means the current branch tip is a descendant of the metadata commit and therefore contains that handed-over state plus additional commits. Recency by checkout time, branch name, or local intuition is not enough.
-
-6. **Switch to the target branch when needed**
-   - If not already on the confirmed target branch and the tree is clean, checkout the target branch and set up tracking if required.
-   - If branch switching would be destructive, stop.
-
-7. **Compare local and remote branch state**
-   - Determine whether the target branch is ahead, behind, up to date, or diverged from its tracked remote branch.
-   - If the target branch has no upstream, note that the workflow may create one during push.
+3. **Compare local and remote branch state**
+   - Determine whether the current branch is ahead, behind, up to date, diverged, or unpublished.
+   - If the branch has no upstream, note that handover may create one during push.
    - If the local branch is behind and clean, it may be fast-forwarded during reconciliation.
    - If the local branch is behind but not clean, stop instead of attempting a mixed reconciliation.
    - If local and remote have diverged, stop and report the divergence for explicit resolution.
 
-8. **Stage everything if local changes exist**
+4. **Stage everything if local changes exist**
    Stage all local changes, tracked and new files. Never discard or overwrite uncommitted changes during this step.
 
-9. **Create a durable checkpoint when needed**
-   - If the target branch is dirty and unpublished, create a durable checkpoint before verification can block handover.
-   - The preferred checkpoint is a clearly marked non-release commit on the target branch, created only to preserve work and enable recovery.
+5. **Create a durable checkpoint when needed**
+   - If the current branch is dirty or unpublished, create a durable checkpoint before verification can block handover.
+   - The preferred checkpoint is a clearly marked non-release commit on the current branch, created only to preserve work and enable recovery.
    - If repo policy allows publishing that checkpoint safely, publish it before continuing so another machine can resume from it.
    - If the user declines the checkpoint and the work would remain local-only, stop and say so explicitly.
 
-10. **Test gate**
+6. **Test gate**
    Run the repo verification commands from the Project Profile when a commit, reconciliation, or publish action is needed. Proceed only if required checks pass, and stop immediately on failure. If the changeset is docs-only or infrastructure-only, skip heavyweight verification steps according to `TCTBP.json`, but still run editor diagnostics.
 
-11. **Documentation impact**
+7. **Documentation impact**
    Classify the changeset as one or more of `user-visible-feature`, `ui-or-interaction`, `config-or-settings`, `packaging-or-metadata`, `roadmap-or-status`, or `internal-only`. Review the documentation files required by `TCTBP.json`. Before committing, report either `Docs updated` with the files changed, or `No docs impact` with a short reason. If required documentation is clearly stale relative to the changeset, stop and fix it before continuing.
 
-12. **Commit everything when needed**
+8. **Commit everything when needed**
    If staged changes exist, commit them automatically with a clear message. Use this commit as the durable local checkpoint before any reconciliation that could otherwise alter branch state.
    If a pre-verification checkpoint commit was already created and still represents the desired preserved state, reuse it rather than creating a second redundant checkpoint commit.
 
-13. **Ship if needed**
-   If release policy says SHIP is required, or versions are out of sync, run the full SHIP workflow. If changes are docs-only or infrastructure-only, skip bump and tag and continue.
+9. **Reconcile branch state**
+   If the tracked remote branch is ahead and local is clean, fast-forward local to the remote branch. If the tracked remote branch is ahead and local is not clean, stop. If local is ahead, prepare to publish the current branch. If local and remote are already in sync, keep the current state and continue. Never auto-merge or auto-rebase as part of reconciliation.
 
-14. **Reconcile branch state**
-   If the tracked remote branch is ahead and local is clean, fast-forward local to the remote branch. If the tracked remote branch is ahead and local is not clean, stop. If local is ahead, prepare to publish the target branch. If local and remote are already in sync, keep the current state and continue. Never auto-merge or auto-rebase as part of reconciliation.
+10. **Push synced state when needed**
+   Push the current branch to `origin` when local is ahead or an upstream must be created. Push tags if a SHIP already occurred or relevant tags exist. Update and push the metadata branch `tctbp/handover-state` so it records the current branch and handed-over commit. Never force-push as part of handover.
+   Update the metadata branch using a secondary worktree or another equally non-destructive mechanism so the current work branch never has to be abandoned or risked during metadata publication.
 
-15. **Push synced state when needed**
-   Push the target branch to `origin` when local is ahead or an upstream must be created. Push tags if a SHIP occurred or relevant tags exist. Update and push the metadata branch `tctbp/handover-state` so it records the target branch and handed-over commit. Never force-push as part of handover.
-   Update the metadata branch using a secondary worktree or another equally non-destructive mechanism so the active work branch never has to be abandoned or risked during metadata publication.
+11. **Verify sync**
+   Confirm the local current branch matches `origin/<current-branch>`. Confirm the metadata branch reflects the same branch and handed-over commit. Confirm the working directory is still on the intended current branch. If sync cannot be verified, stop and report the discrepancy.
 
-16. **Verify sync**
-   Confirm the local target branch matches `origin/<target-branch>`. Confirm the metadata branch reflects the same target branch and handed-over commit. Confirm the local default branch is not known to be behind `origin/<default-branch>` after fetch. Confirm the working directory is still on the intended target branch. If sync cannot be verified, stop and report the discrepancy.
-
-17. **Summary**
-   Render a concise four-column summary table using `Origin`, `Local`, `Status`, and `Action(s)`. Keep the table shorter than `status` and focused on the handover outcome. After the table, add a one-line completion summary that confirms the target branch, handed-over commit, version when relevant, and latest tag when relevant. Explicitly note that handover covered the active work branch, the handover metadata branch, and relevant tags only, not every branch in the repository.
+12. **Summary**
+   Render a concise four-column summary table using `Origin`, `Local`, `Status`, and `Action(s)`. Keep the table shorter than `status` and focused on the handover outcome. After the table, add a one-line completion summary that confirms the current branch, handed-over commit, version when relevant, and latest tag when relevant. Explicitly note that handover covered the current work branch, the handover metadata branch, and relevant tags only, not every branch in the repository.
 
 Required HANDOVER summary columns:
 
@@ -288,13 +309,13 @@ Required HANDOVER summary columns:
 
 Recommended HANDOVER summary rows:
 
-| Row                   | Origin                             | Local                             | Status                           | Action(s)                        |
-| --------------------- | ---------------------------------- | --------------------------------- | -------------------------------- | -------------------------------- |
-| Target branch state   | `origin/<target-branch>` SHA       | local `<target-branch>` SHA       | synced, published, or blocked    | none, push, or stop              |
-| Last shipped tag      | latest remote tag or `n/a`         | latest local tag or `n/a`         | aligned, missing, or drifted     | none, push tag, or inspect       |
-| Metadata branch state | `origin/tctbp/handover-state` SHA  | local metadata SHA or pending     | published, pending, or missing   | none, push metadata, or stop     |
-| Metadata consistency  | metadata branch commit/tag/version | current branch commit/tag/version | consistent, stale, or mismatched | none, rerun handover, or inspect |
-| Handover baseline     | expected remote sync baseline      | current tree and tracking state   | complete, partial, or blocked    | none, clean up, or stop          |
+| Row                   | Origin                              | Local                              | Status                           | Action(s)                        |
+| --------------------- | ----------------------------------- | ---------------------------------- | -------------------------------- | -------------------------------- |
+| Current branch state  | `origin/<current-branch>` SHA       | local `<current-branch>` SHA       | synced, published, or blocked    | none, push, or stop              |
+| Last shipped tag      | latest remote tag or `n/a`          | latest local tag or `n/a`          | aligned, missing, or drifted     | none, push tag, or inspect       |
+| Metadata branch state | `origin/tctbp/handover-state` SHA   | local metadata SHA or pending      | published, pending, or missing   | none, push metadata, or stop     |
+| Metadata consistency  | metadata branch commit/tag/version  | current branch commit/tag/version  | consistent, stale, or mismatched | none, rerun handover, or inspect |
+| Handover baseline     | expected remote sync baseline       | current tree and tracking state    | complete, partial, or blocked    | none, clean up, or stop          |
 
 HANDOVER summary rules:
 
@@ -306,8 +327,72 @@ HANDOVER summary rules:
 
 Approval rules:
 
-- Using the `handover` trigger grants approval to push the target branch and relevant tags for that workflow only.
+- Using the `handover` trigger grants approval to push the current branch, the metadata branch, and relevant tags for that workflow only.
 - Any other remote push still requires explicit approval.
+
+---
+
+## Resume Workflow (Start-of-day restore)
+
+Preferred trigger: `resume` / `resume please`
+
+Purpose: restore the intended work branch at the start of a session by consulting the handover metadata branch first and reconciling only through safe checkout and fast-forward operations.
+
+Trusted outcome:
+
+- If valid handover metadata exists, `resume` uses it as the primary signal for which branch to restore.
+- If no valid metadata exists, `resume` may infer the branch from safe repo state, but it must stop on ambiguity.
+- `resume` never publishes, force-pushes, rebases, or rewrites history.
+
+Behaviour, safe and deterministic:
+
+1. **Preflight**
+   - Report the current branch explicitly.
+   - Confirm working tree state.
+   - Stop immediately if `HEAD` is detached.
+   - If the current branch is dirty and switching branches might be needed, stop and ask the user to resolve the local state first.
+
+2. **Fetch and inspect remote state**
+   - Fetch from `origin` with tags.
+   - Determine the default branch state, the metadata branch state if present, and candidate work-branch state.
+
+3. **Read handover metadata when available**
+   - If `origin/tctbp/handover-state` exists, read `.github/TCTBP_STATE.json` from that branch first.
+   - If the metadata names a branch that still exists on origin, treat that branch as the preferred resume candidate when the current branch is not already proven newer by branch ancestry.
+   - If the metadata is missing, stale, malformed, or refers to a branch that no longer exists, ignore it and fall back to branch inference.
+   - Never treat the metadata branch itself as a resume candidate.
+
+4. **Determine the target work branch**
+   - Use this precedence order:
+     1. If handover metadata resolves to a valid remote work branch, use that branch unless the current clean non-default branch is proven newer by ancestry.
+     2. If the current branch is non-default, clean, and already tracks the intended remote work branch, it may remain the target branch.
+     3. Otherwise inspect remote branches sorted by most recent commit, excluding `origin/<default-branch>`, `origin/HEAD`, and `origin/tctbp/handover-state`.
+   - If a single remote work branch is the clear candidate, propose it as the target branch.
+   - Ask for confirmation before switching whenever the workflow is not already on the selected target branch.
+   - If multiple plausible candidate work branches exist, stop and ask the user which branch to resume.
+   - If no suitable target branch exists, remain on the current branch and report that no resume branch was detected.
+
+5. **Switch to the target branch when needed**
+   - If not already on the confirmed target branch and the tree is clean, check out the target branch and set up local tracking if required.
+   - If branch switching would be destructive, stop.
+
+6. **Reconcile read-only**
+   - Determine whether the target branch is ahead, behind, up to date, or diverged from its tracked remote branch.
+   - If the local branch is behind and clean, it may be fast-forwarded.
+   - If the local branch is ahead, stop and report that `resume` does not publish.
+   - If local and remote have diverged, stop and report the divergence for explicit resolution.
+
+7. **Verify ready state**
+   - Confirm the working directory is on the intended branch.
+   - Confirm the branch now matches `origin/<target-branch>` or explain the non-destructive blocker.
+
+8. **Summary**
+   - Confirm which branch was restored, whether a fast-forward or local tracking branch creation was needed, and whether any blocker remains.
+   - Explicitly state that `resume` made no publication or release changes.
+
+Approval rules:
+
+- `resume` does not grant push approval because it must never publish as part of restore.
 
 ---
 
@@ -325,7 +410,7 @@ Behaviour:
 2. **Report**
    - Render a concise four-column snapshot table.
    - Use the columns `Origin`, `Local`, `Status`, and `Action(s)`.
-   - Include the current branch, default branch, working tree, version, tag state, ahead/behind state, and whether `ship` or `handover` is recommended.
+   - Include the current branch, default branch, working tree, version, tag state, ahead/behind state, and whether `resume`, `publish`, `ship`, or `handover` is recommended.
    - If handover metadata points at a different published branch than the current clean branch, call that out explicitly as a resume-target mismatch, not merely generic metadata staleness.
 
 Required STATUS snapshot columns:
@@ -352,7 +437,7 @@ Recommended STATUS snapshot rows:
 
 1. **Recommend next steps**
    - Provide 1 to 3 actionable recommendations with a one-line reason for each.
-   - Use this priority order when multiple are valid: `abort`, `handover`, `ship`, `none`.
+   - Use this priority order when multiple are valid: `abort`, `resume`, `handover`, `publish`, `ship`, `none`.
    - Never execute recommended actions automatically from `status`.
 
 No approval required. No changes made.

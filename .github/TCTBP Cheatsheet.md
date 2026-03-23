@@ -58,14 +58,39 @@ Notes:
 - Stops if `HEAD` is detached
 - Does not treat a bare `tctbp` request as permission to mutate repository state
 
+### `publish` / `publish please`
+
+Purpose:
+Safely publish the current branch to `origin` without release semantics.
+
+Attempts to:
+
+- preflight the current branch state
+- fetch and compare local versus origin
+- allow first publication by creating the upstream when needed
+- push the current branch when it is clean and ahead
+- verify that the branch is now synced
+
+Use when:
+
+- you want to sync the current branch to origin without bumping version or creating a tag
+- you want to publish a clean fresh branch before using `branch <new-branch-name>` later
+
+Notes:
+
+- Does not bump version
+- Does not create a tag
+- Does not update handover metadata
+- Stops if the branch is dirty, behind, diverged, or detached
+
 ### `handover` / `handover please`
 
 Purpose:
-Safely reconcile the working branch with `origin` so you can stop on one machine and resume on another from the latest safely recoverable shared state.
+Safely checkpoint and publish the current work branch at the end of a session, then refresh handover metadata so another machine can resume deterministically.
 
 Scope:
 
-- syncs the active work branch, a dedicated handover metadata branch, and relevant tags only
+- syncs the current work branch, a dedicated handover metadata branch, and relevant tags only
 - does not reconcile every branch in the repository
 - does not merge into `main` as part of normal machine-to-machine sync
 
@@ -79,18 +104,15 @@ Handover metadata:
 
 Attempts to:
 
-- preserve dirty work on the active branch when needed
+- preserve dirty work on the current branch when needed
 - create a durable checkpoint for dirty unpublished work before verification can strand it on one machine
 - fetch and inspect remote state
-- prefer the handover metadata branch over an arbitrary clean non-default branch when metadata is newer and valid
-- fall back to branch detection only when metadata is missing, stale, or invalid
-- ask for confirmation before switching if branch choice is ambiguous
-- check out the target branch when safe
 - fast-forward when remote is ahead and local is clean
-- publish the branch when local is ahead
-- stop on divergence or ambiguity
+- publish the current branch when local is ahead or still unpublished
+- stop on divergence or unresolved blockers
+- update the metadata branch after current-branch publication succeeds
 - push relevant tags when appropriate
-- confirm that you are positioned back on the resumed work branch with local and remote in sync
+- confirm that the current branch and metadata branch are both in sync
 
 Notes:
 
@@ -103,8 +125,8 @@ Notes:
 Use when:
 
 - you are finishing work on one machine
-- you are resuming work on another machine
-- you want one trusted sync command before stopping or starting work
+- you are finishing a work session and want another machine to resume cleanly
+- you want one trusted end-of-day sync command before stopping work
 
 Never does:
 
@@ -112,6 +134,32 @@ Never does:
 - hard reset
 - destructive checkout
 - force-push
+
+### `resume` / `resume please`
+
+Purpose:
+Safely restore the intended work branch at the start of a session.
+
+Attempts to:
+
+- fetch and inspect remote state
+- read the handover metadata branch first
+- prefer metadata over arbitrary branch-recency guesses
+- create a local tracking branch from the intended remote branch when needed
+- fast-forward a clean branch when origin is ahead
+- stop on ambiguity, divergence, or any case that would require publication
+
+Use when:
+
+- you are starting work on another machine
+- you want to restore the last handed-over branch safely before making new changes
+
+Notes:
+
+- Does not publish
+- Does not update metadata
+- Does not create a release
+- Stops if switching branches would be destructive or if local/remote state is ambiguous
 
 ### `deploy` / `deploy please`
 
@@ -197,6 +245,7 @@ Attempts to:
 - stop instead of switching if the current branch is dirty and SHIP is declined
 - stop instead of guessing if the source branch or local `main` is diverged
 - stop if the source branch is ahead, behind, or otherwise not yet synced to its upstream
+- recommend `publish`, `handover`, or `ship` first when the source branch is not yet published or synced
 - merge the current branch into local `main` when the current branch is not already `main`
 - skip the merge step when you already start on `main`
 - create and switch to the new branch from updated local `main`
@@ -212,10 +261,10 @@ Safety expectation:
 
 When `handover` succeeds:
 
-- the active work branch has been safely reconciled with `origin`
+- the current work branch has been safely reconciled with `origin`
 - the handover metadata branch points at that branch and handed-over commit
 - relevant tags have been pushed when needed
-- if you started on another machine from a clean state, you are back on the detected and confirmed work branch
+- the next `resume` can restore the intended branch deterministically
 - if the workflow could not do that safely, it stops instead of guessing
 - no implicit merge to `main` was performed as part of that sync
 
@@ -247,14 +296,16 @@ Repo-specific docs commonly reviewed:
 ## Approval Model
 
 - `ship` may create local commit and tag state as part of the workflow
-- `handover` grants approval to push the target branch and relevant tags for that workflow only
+- `publish` grants approval to push the current branch for that workflow only
+- `handover` grants approval to push the current branch, metadata branch, and relevant tags for that workflow only
 - `deploy` grants approval to run the repo-defined deployment commands for that workflow only
 - Any other remote push still requires explicit approval unless already covered by the active workflow
 
 ## Quick Choice
 
 - Need a release version or tag: use `ship`
-- Need to stop on one machine and resume on another safely: use `handover`
+- Need to publish the current branch without release side effects: use `publish`
+- Need to stop on one machine and resume on another safely: use `handover`, then `resume` on the next machine
 - Need the local runtime installed or refreshed: use `deploy`
 - Need a quick repo state check: use `status`
 - Need to recover from partial workflow state: use `abort`
