@@ -246,6 +246,7 @@ Attempts to:
 - stop instead of guessing if the source branch or local `main` is diverged
 - stop if the source branch is ahead, behind, or otherwise not yet synced to its upstream
 - recommend `publish`, `handover`, or `ship` first when the source branch is not yet published or synced
+- ask for explicit confirmation before merging the current non-default branch back into `main`
 - merge the current branch into local `main` when the current branch is not already `main`
 - skip the merge step when you already start on `main`
 - create and switch to the new branch from updated local `main`
@@ -255,6 +256,7 @@ Safety expectation:
 - never discards local work to complete the transition
 - never uses stash, reset, rebase, force-push, or destructive checkout as part of the branch workflow
 - requires the source branch to be published before branch closeout continues
+- treats merge back to `main` as the expected default path, but stops if that merge is explicitly declined
 - only offers old-branch deletion after the merge and new-branch creation have both succeeded
 
 ## Handover Promise
