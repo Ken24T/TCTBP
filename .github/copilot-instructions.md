@@ -98,7 +98,7 @@ Supported triggers remain:
 - `abort`
 - `branch <new-branch-name>`
 
-For mutating workflows, keep detached-HEAD stop conditions, branch-name validation, publication safety, and handover metadata safety aligned across the JSON profile and Markdown guidance.
+For mutating workflows, keep detached-HEAD stop conditions, branch-name validation, publication safety, branch-closeout merge confirmation, and handover metadata safety aligned across the JSON profile and Markdown guidance.
 
 ## Editing Guidance
 

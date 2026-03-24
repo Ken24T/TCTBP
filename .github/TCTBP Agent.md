@@ -146,26 +146,33 @@ Behaviour, local-first and no-code-loss:
    - If the default branch is diverged from its upstream, stop.
    - If the default branch is behind its upstream and clean, fast-forward it from origin.
 
-7. **Merge the source branch into the default branch when needed**
+7. **Confirm merge into the default branch when needed**
+   - If the current branch is already the default branch, skip this confirmation and continue from the updated default branch.
+   - Otherwise ask whether the current published branch should be merged into the default branch before creating the next branch.
+   - Treat `yes` as the expected default answer for the normal sole-developer closeout path.
+   - If the user declines the merge, stop and explain that the branch workflow will not create the next branch from the default branch as though the source branch had already been integrated.
+   - When stopping because the merge was declined, recommend the exact alternative that fits the state: continue on the current branch, `publish`, or `handover`.
+
+8. **Merge the source branch into the default branch when needed**
    - If the current branch is already the default branch, skip the merge step and continue from the updated default branch.
-   - Otherwise merge the source branch into the default branch using a non-destructive merge.
+   - Otherwise merge the source branch into the default branch using a non-destructive merge after explicit confirmation.
    - Stop on conflicts and leave the repository in a recoverable state for manual resolution.
 
-8. **Verify the branch transition before creating the next branch**
+9. **Verify the branch transition before creating the next branch**
    - Confirm the source branch tip commit is reachable from the default branch before proceeding.
    - If that cannot be confirmed, stop.
 
-9. **Create and switch to the new branch** from the updated default branch.
+10. **Create and switch to the new branch** from the updated default branch.
    - Stop if the new branch cannot be created or checked out safely.
 
-10. **Cleanup, optional and last**
+11. **Cleanup, optional and last**
    Consider deleting the old branch only after the merge succeeded, the source branch tip is reachable from the default branch, and the new branch exists and is checked out. Ask the user whether to delete the old branch locally and remotely. Do not assume the old branch was a feature branch; apply the same rule to `fix/`, `docs/`, `infrastructure/`, or other work branches.
 
-11. **Remote safety**
+12. **Remote safety**
    Any push requires explicit approval. Any branch deletion requires explicit approval.
 
-12. **Summary**
-   Confirm the source branch, the resulting default-branch state, the new branch name, and whether any push or deletion occurred. Explicitly state whether the workflow stopped for safety, skipped the merge because the workflow started on the default branch, or completed the full transition without code loss. If the workflow stopped because the source branch was not yet published, say so explicitly and recommend the exact sync step needed before retrying.
+13. **Summary**
+   Confirm the source branch, whether merge into the default branch was confirmed, the resulting default-branch state, the new branch name, and whether any push or deletion occurred. Explicitly state whether the workflow stopped for safety, stopped because merge into the default branch was declined, skipped the merge because the workflow started on the default branch, or completed the full transition without code loss. If the workflow stopped because the source branch was not yet published, say so explicitly and recommend the exact sync step needed before retrying.
 
 Versioning interaction:
 
