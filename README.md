@@ -6,36 +6,47 @@ It exists so the workflow can be developed once, improved centrally, and then co
 
 ## Template Files
 
-The current template set lives in `.github/`:
+The current template set lives across `.github/` and `scripts/`:
 
-- `TCTBP.json`
-- `TCTBP Agent.md`
-- `TCTBP Cheatsheet.md`
-- `copilot-instructions.md`
+- `.github/agents/TCTBP.agent.md`
+- `.github/TCTBP.json`
+- `.github/TCTBP Agent.md`
+- `.github/TCTBP Cheatsheet.md`
+- `.github/copilot-instructions.md`
+- `.github/hooks/tctbp-safety.json`
+- `scripts/tctbp-pretool-hook.js`
 
-There is also an optional helper prompt in `.github/prompts/`:
+The reusable helper prompts live in `.github/prompts/`:
 
+- `Install TCTBP Agent Infrastructure Into Another Repository.prompt.md`
 - `Onboard New Repository.prompt.md`
 - `Update Existing Repository From TCTBP.prompt.md`
 
 Use these together.
 
-- `TCTBP.json` is the machine-readable project profile and workflow policy.
-- `TCTBP Agent.md` explains behavioural rules and guard rails.
-- `TCTBP Cheatsheet.md` is the short operator view.
-- `copilot-instructions.md` explains how the templates should be customised and maintained.
+- `.github/agents/TCTBP.agent.md` is the runtime entry point for explicit TCTBP trigger routing.
+- `.github/TCTBP.json` is the machine-readable project profile and workflow policy.
+- `.github/TCTBP Agent.md` explains behavioural rules and guard rails.
+- `.github/TCTBP Cheatsheet.md` is the short operator view.
+- `.github/copilot-instructions.md` explains how the templates should be customised and maintained.
+- `.github/hooks/tctbp-safety.json` and `scripts/tctbp-pretool-hook.js` provide the optional runtime approval hook for risky git commands.
 
 ## Recommended Use In A New Repository
 
 For a brand new project, the simplest workflow is:
 
 1. Create the new local repository folder.
-2. Create a `.github/` folder in that repository.
-3. Copy the four template files from this repo into that `.github/` folder.
-4. Optionally copy `.github/prompts/Onboard New Repository.prompt.md` as well.
-5. Open the new repository in VS Code.
-6. Start a Copilot chat in that repository.
-7. Use `.github/prompts/Onboard New Repository.prompt.md` or explicitly ask Copilot to read `.github/copilot-instructions.md` and customise the template files for the new project.
+2. Copy the TCTBP runtime files into that repository:
+	- `.github/agents/TCTBP.agent.md`
+	- `.github/TCTBP.json`
+	- `.github/TCTBP Agent.md`
+	- `.github/TCTBP Cheatsheet.md`
+	- `.github/copilot-instructions.md`
+	- optional hook layer: `.github/hooks/tctbp-safety.json` and `scripts/tctbp-pretool-hook.js`
+3. Copy the relevant prompt files from `.github/prompts/`.
+4. Open the new repository in VS Code.
+5. Start a Copilot chat in that repository.
+6. Use `.github/prompts/Onboard New Repository.prompt.md` or explicitly ask Copilot to read `.github/copilot-instructions.md` and customise the installed runtime files for the new project.
 
 That explicit chat step matters. Do not assume Copilot will automatically infer that the placeholders should be replaced just because the files exist.
 
@@ -46,12 +57,13 @@ For a repository that already has older or locally customised TCTBP files, do no
 Instead:
 
 1. Create a dedicated update branch in the recipient repository.
-2. Copy `.github/prompts/Update Existing Repository From TCTBP.prompt.md` into the recipient repository if needed.
-3. Open the recipient repository in VS Code.
-4. Ask Copilot to use that prompt to read the canonical TCTBP files from this repository and compare them with the local workflow files.
-5. Have Copilot merge forward the generic workflow and safety improvements while preserving the recipient repository's repo-specific values, commands, docs paths, deploy settings, and intentional deviations.
-6. Prefer a backup-capable update mode so the recipient repository keeps a non-destructive recovery path before editing.
-7. Review the diff and run the recipient repository's validation steps before merging the update branch.
+2. Use `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` when the recipient repository still needs the custom agent entry point and optional hook layer installed or refreshed alongside the workflow files.
+3. Use `.github/prompts/Update Existing Repository From TCTBP.prompt.md` when the runtime infrastructure already exists and the goal is to merge forward newer canonical workflow logic safely.
+4. Open the recipient repository in VS Code.
+5. Ask Copilot to use the appropriate prompt to read the canonical TCTBP files from this repository and compare them with the local runtime files.
+6. Have Copilot merge forward the generic workflow and safety improvements while preserving the recipient repository's repo-specific values, commands, docs paths, deploy settings, and intentional deviations.
+7. Prefer a backup-capable update mode so the recipient repository keeps a non-destructive recovery path before editing.
+8. Review the diff and run the recipient repository's validation steps before merging the update branch.
 
 This repository's migration prompt is designed for exactly that use case: safe forward-merging rather than template overwrite.
 
@@ -96,12 +108,26 @@ The goal of pass 2 is to align the workflow with the repo, while keeping the wor
 
 The reusable prompts now live in `.github/prompts/`:
 
+- `Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` for full runtime agent installation or refresh in another repository
 - `Onboard New Repository.prompt.md` for brand new repositories
 - `Update Existing Repository From TCTBP.prompt.md` for existing repositories that need their local TCTBP files merged forward safely
 
 ### For New Repositories
 
 The reusable onboarding prompt lives at `.github/prompts/Onboard New Repository.prompt.md`.
+
+### For Full Agent Installation Or Refresh
+
+The reusable installer prompt lives at `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md`.
+
+Use it when a target repository should receive or refresh the full TCTBP runtime surface:
+
+- `.github/agents/TCTBP.agent.md`
+- `.github/TCTBP.json`
+- `.github/TCTBP Agent.md`
+- `.github/TCTBP Cheatsheet.md`
+- `.github/copilot-instructions.md`
+- optional hook layer files
 
 ### For Existing Repositories
 

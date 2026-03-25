@@ -54,6 +54,30 @@ If `Include hook layer` is `YES`, also read:
 - `.github/hooks/tctbp-safety.json`
 - `scripts/tctbp-pretool-hook.js`
 
+## Target Repository Evidence To Read Before Editing
+
+Inspect the target repository before editing anything. Read the local versions of these files when they exist:
+
+- `.github/agents/TCTBP.agent.md`
+- `.github/TCTBP.json`
+- `.github/TCTBP Agent.md`
+- `.github/TCTBP Cheatsheet.md`
+- `.github/copilot-instructions.md`
+- `.github/prompts/Onboard New Repository.prompt.md`
+- `.github/prompts/Update Existing Repository From TCTBP.prompt.md`
+- `.github/hooks/tctbp-safety.json`
+- `scripts/tctbp-pretool-hook.js`
+
+Also inspect the target repository's real operating context before editing, using whichever of these sources exist and are relevant:
+
+- `README.md`, `AGENTS.md`, `CONTRIBUTING.md`, or equivalent repo guidance
+- project manifests and lock files
+- version files and release scripts
+- deploy or install scripts
+- docs, runbooks, and architecture notes that the workflow references
+
+Do not infer repo-specific settings from the canonical repository when the target repository already contains stronger local evidence.
+
 ## Target Files To Create Or Update
 
 Install or update these files in the target repository:
@@ -87,11 +111,12 @@ If `Target repository state` is `NEW_REPOSITORY`:
 
 If `Target repository state` is `EXISTING_REPOSITORY`:
 
-1. Read the target repository's existing TCTBP files first if they exist.
+1. Read the target repository's existing TCTBP runtime files first if they exist, including the local custom agent entry point, prompts, and optional hook files.
 2. Preserve repo-specific values such as commands, version files, docs paths, deploy targets, locale, and intentional workflow deviations.
 3. Merge forward generic improvements from the canonical repository instead of blindly overwriting local files.
 4. If `Backup mode` requests backups, create them before editing.
 5. Prefer a dedicated branch when the target repository is already under version control.
+6. If `Preferred install/update branch in target repo` is provided, create or switch to that branch before editing when it can be done non-destructively.
 
 ## What Must Be Customised In The Target Repository
 
@@ -124,11 +149,17 @@ If `Include hook layer` is `NO`:
 ## Required Behaviour
 
 1. Read the canonical TCTBP files from the current repository.
-2. Inspect the target repository structure, commands, version files, and documentation paths before editing.
-3. Determine whether the target repo is a new install or an update.
-4. Create the required files and folders in the target repo.
-5. Preserve repo-specific settings while applying the canonical runtime model.
-6. Keep these target files aligned with each other after editing:
+2. Read the current local versions of every managed target file before editing when they exist.
+3. Inspect the target repository structure, commands, version files, deployment scripts, and documentation paths before editing.
+4. Classify what you find before making edits:
+   - generic canonical improvements to merge forward
+   - repo-specific local settings to preserve exactly
+   - conflicts or intentional deviations that require judgement
+5. Determine whether the target repo is a new install or an update.
+6. If the target repository is already under git and a preferred install/update branch was provided, create or switch to that branch before editing when safe.
+7. Create the required files and folders in the target repo.
+8. Preserve repo-specific settings while applying the canonical runtime model.
+9. Keep these target files aligned with each other after editing:
    - `.github/agents/TCTBP.agent.md`
    - `.github/TCTBP.json`
    - `.github/TCTBP Agent.md`
@@ -136,9 +167,14 @@ If `Include hook layer` is `NO`:
    - `.github/copilot-instructions.md`
    - `.github/prompts/Onboard New Repository.prompt.md`
    - `.github/prompts/Update Existing Repository From TCTBP.prompt.md`
-7. If the hook layer is included, keep `.github/hooks/tctbp-safety.json` and `scripts/tctbp-pretool-hook.js` aligned with the installed documentation.
-8. Validate the edited files using available JSON/Markdown diagnostics and any lightweight repo validation that fits the change type.
-9. Do not perform SHIP, publish, deploy, or handover in the target repo unless explicitly requested.
+10. If the hook layer is included, keep `.github/hooks/tctbp-safety.json` and `scripts/tctbp-pretool-hook.js` aligned with the installed documentation.
+11. Validate the edited files using available JSON/Markdown diagnostics and any lightweight repo validation that fits the change type.
+12. Run a post-install smoke check for the installed runtime surface:
+   - confirm `.github/agents/TCTBP.agent.md` frontmatter is valid and its description still contains the explicit trigger phrases
+   - confirm prompt frontmatter is valid and references the installed runtime files consistently
+   - confirm `.github/hooks/tctbp-safety.json` points at the installed hook script path when the hook layer is enabled
+   - confirm no docs or instructions still reference omitted hook files when the hook layer is disabled
+13. Do not perform SHIP, publish, deploy, or handover in the target repo unless explicitly requested.
 
 ## What You Must Not Do
 
