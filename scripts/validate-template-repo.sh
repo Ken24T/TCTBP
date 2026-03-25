@@ -9,7 +9,7 @@ required_files=(
   ".github/TCTBP Agent.md"
   ".github/TCTBP Cheatsheet.md"
   ".github/copilot-instructions.md"
-  ".github/prompts/Onboard New Repository.prompt.md"
+  ".github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md"
   "README.md"
   "VERSION"
   "CHANGELOG.md"

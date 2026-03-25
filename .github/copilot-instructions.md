@@ -110,9 +110,7 @@ If the custom agent or hook layer is changed, keep the runtime files aligned wit
 - Prefer small, focused edits over broad rewrites.
 - Keep the files copyable into a fresh repository with minimal follow-up changes.
 - Add or update examples only when they clarify how a downstream repository should fill in the template.
-- Keep both prompt files current when the recommended onboarding or migration workflow changes:
+- Keep the consolidated application prompt current when the recommended onboarding or migration workflow changes:
 	- `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md`
-	- `.github/prompts/Onboard New Repository.prompt.md`
-	- `.github/prompts/Update Existing Repository From TCTBP.prompt.md`
 - Document any schema change in both the JSON profile and the surrounding Markdown guidance.
 - Preserve Australian English only where the downstream repository explicitly chooses it; do not assume a locale by default.

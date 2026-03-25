@@ -16,11 +16,9 @@ The current template set lives across `.github/` and `scripts/`:
 - `.github/hooks/tctbp-safety.json`
 - `scripts/tctbp-pretool-hook.js`
 
-The reusable helper prompts live in `.github/prompts/`:
+The reusable helper prompt lives in `.github/prompts/`:
 
 - `Install TCTBP Agent Infrastructure Into Another Repository.prompt.md`
-- `Onboard New Repository.prompt.md`
-- `Update Existing Repository From TCTBP.prompt.md`
 
 Use these together.
 
@@ -43,10 +41,10 @@ For a brand new project, the simplest workflow is:
 	- `.github/TCTBP Cheatsheet.md`
 	- `.github/copilot-instructions.md`
 	- optional hook layer: `.github/hooks/tctbp-safety.json` and `scripts/tctbp-pretool-hook.js`
-3. Copy the relevant prompt files from `.github/prompts/`.
+3. Copy `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` if you want the target repository to keep the same reusable application prompt locally.
 4. Open the new repository in VS Code.
 5. Start a Copilot chat in that repository.
-6. Use `.github/prompts/Onboard New Repository.prompt.md` or explicitly ask Copilot to read `.github/copilot-instructions.md` and customise the installed runtime files for the new project.
+6. Use `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` in `NEW_REPOSITORY` or `AUTO` mode, or explicitly ask Copilot to read `.github/copilot-instructions.md` and customise the installed runtime files for the new project.
 
 That explicit chat step matters. Do not assume Copilot will automatically infer that the placeholders should be replaced just because the files exist.
 
@@ -57,13 +55,12 @@ For a repository that already has older or locally customised TCTBP files, do no
 Instead:
 
 1. Create a dedicated update branch in the recipient repository.
-2. Use `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` when the recipient repository still needs the custom agent entry point and optional hook layer installed or refreshed alongside the workflow files.
-3. Use `.github/prompts/Update Existing Repository From TCTBP.prompt.md` when the runtime infrastructure already exists and the goal is to merge forward newer canonical workflow logic safely.
-4. Open the recipient repository in VS Code.
-5. Ask Copilot to use the appropriate prompt to read the canonical TCTBP files from this repository and compare them with the local runtime files.
-6. Have Copilot merge forward the generic workflow and safety improvements while preserving the recipient repository's repo-specific values, commands, docs paths, deploy settings, and intentional deviations.
-7. Prefer a backup-capable update mode so the recipient repository keeps a non-destructive recovery path before editing.
-8. Review the diff and run the recipient repository's validation steps before merging the update branch.
+2. Use `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` in `AUTO` mode so Copilot can detect whether the recipient repository is new, missing the agent runtime, or already using the agent runtime and just needs a refresh.
+3. Open the recipient repository in VS Code.
+4. Ask Copilot to use that prompt to read the canonical TCTBP files from this repository and compare them with the local runtime files.
+5. Have Copilot merge forward the generic workflow and safety improvements while preserving the recipient repository's repo-specific values, commands, docs paths, deploy settings, and intentional deviations.
+6. Prefer a backup-capable update mode so the recipient repository keeps a non-destructive recovery path before editing.
+7. Review the diff and run the recipient repository's validation steps before merging the update branch.
 
 This repository's migration prompt is designed for exactly that use case: safe forward-merging rather than template overwrite.
 
@@ -106,89 +103,58 @@ The goal of pass 2 is to align the workflow with the repo, while keeping the wor
 
 ## Recommended Prompt Files
 
-The reusable prompts now live in `.github/prompts/`:
+The reusable prompt now lives in `.github/prompts/`:
 
-- `Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` for full runtime agent installation or refresh in another repository
-- `Onboard New Repository.prompt.md` for brand new repositories
-- `Update Existing Repository From TCTBP.prompt.md` for existing repositories that need their local TCTBP files merged forward safely
+- `Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` for installing or refreshing TCTBP in another repository across the new, missing-agent, and existing-agent cases
 
-### For New Repositories
-
-The reusable onboarding prompt lives at `.github/prompts/Onboard New Repository.prompt.md`.
-
-### For Full Agent Installation Or Refresh
+### For New Repositories, Missing Agent Runtime, Or Existing Runtime Refresh
 
 The reusable installer prompt lives at `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md`.
 
-Use it when a target repository should receive or refresh the full TCTBP runtime surface:
+Use it in `AUTO` mode when a target repository should receive or refresh the TCTBP runtime surface and you want Copilot to detect whether it is:
+
+- a brand new repository
+- an existing repository with some TCTBP files but no custom agent runtime
+- an existing repository with the custom agent runtime that needs to be refreshed
+
+When TCTBP is applied successfully, the target repository should receive or retain:
 
 - `.github/agents/TCTBP.agent.md`
 - `.github/TCTBP.json`
 - `.github/TCTBP Agent.md`
 - `.github/TCTBP Cheatsheet.md`
 - `.github/copilot-instructions.md`
+- `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md`
 - optional hook layer files
-
-### For Existing Repositories
-
-The reusable migration prompt lives at `.github/prompts/Update Existing Repository From TCTBP.prompt.md`.
-
-Use it when a downstream repository already has local TCTBP files and you want Copilot to:
-
-- read the canonical TCTBP files from this repository
-- compare them against the recipient repository's local files
-- create a backup or update branch before editing
-- merge forward generic workflow improvements safely
-- preserve repo-specific instructions instead of overwriting them
 
 ### Manual Prompting
 
-In the new repository, start with a prompt like this:
+From the canonical TCTBP repository, start with a prompt like this:
 
 ```text
-Read .github/copilot-instructions.md and use it as the governing template guidance for this repository.
+Use `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md`.
 
-Then customise these files for this new project:
-- .github/TCTBP.json
-- .github/TCTBP Agent.md
-- .github/TCTBP Cheatsheet.md
-- .github/copilot-instructions.md
-
-Replace all angle-bracket placeholders with repo-specific values where I provide them.
-Keep the TCTBP workflow generic and safe.
-Do not hard-code assumptions that are not true for this project.
-If a field does not apply, either remove it cleanly or set it to null only where the template already allows that.
-
-Project details:
-- Name: <PROJECT_NAME>
-- Description: <SHORT_PROJECT_DESCRIPTION>
-- Language/stack: <LANGUAGE_AND_STACK>
-- Default branch: <DEFAULT_BRANCH>
-- Version files: <VERSION_FILES>
-- Format command: <FORMAT_COMMAND_OR_NULL>
-- Test command: <TEST_COMMAND>
-- Lint command: <LINT_COMMAND_OR_NULL>
-- Build command: <BUILD_COMMAND>
-- Release build command: <RELEASE_BUILD_COMMAND_OR_NULL>
-- Deploy target: <DEPLOY_TARGET_DESCRIPTION_OR_NONE>
-- Docs to review: <DOC_PATHS_OR_NONE>
-- Locale: <LOCALE_OR_NONE>
-
-After updating the files, summarise any placeholders or decisions that still need my confirmation.
+Canonical TCTBP repository path: /home/ken/Documents/development/repos/TCTBP
+Target repository path: /absolute/path/to/target-repo
+Target repository state: AUTO
+Preferred install/update branch in target repo: chore/apply-tctbp
+Include hook layer: YES
+Backup mode for existing repo: BRANCH_AND_FILE_BACKUPS
+Canonical ref to use from this TCTBP repo: main
+Any repo-specific settings that must be preserved exactly: build commands, deploy target names, docs paths
+Any intentional local workflow deviations that must not be normalised away: none known
 ```
 
-That prompt gives Copilot a clear order of operations and reduces the chance of it mixing durable workflow rules with accidental project-specific guesses.
+That prompt gives Copilot a single entry point while still keeping the internal safety paths distinct for installation, adaptation, and refresh.
 
 ## Practical Recommendation
 
 My recommendation is:
 
-1. Copy the four files first.
-2. Open the new repo in VS Code.
-3. Ask Copilot explicitly to read `.github/copilot-instructions.md`.
-4. Give Copilot a structured project profile in the same prompt.
-5. Let Copilot do the first customisation pass.
-6. Review the result with focus on commands, docs paths, deployment settings, and version files.
+1. Point Copilot in this canonical repository at the target repository path.
+2. Use `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` in `AUTO` mode.
+3. Let Copilot inspect the target repository and choose the correct install-or-refresh path.
+4. Review the result with focus on commands, docs paths, deployment settings, version files, and whether the hook layer should stay enabled.
 
 That is better than asking Copilot something broad like "set this repo up" because it anchors the conversation in the template contract before implementation starts.
 
@@ -210,9 +176,9 @@ If those are unknown, the correct behaviour is to leave placeholders, use an all
 For a new repository with no code yet:
 
 1. Initialise the repo.
-2. Copy `.github/` template files.
+2. Copy or apply the TCTBP runtime files.
 3. Open the repo in VS Code.
-4. Ask Copilot to customise the template files.
+4. Ask Copilot to apply TCTBP using the consolidated prompt or equivalent structured input.
 5. Review and commit the customised workflow files.
 6. Only then start asking Copilot to scaffold application code.
 
