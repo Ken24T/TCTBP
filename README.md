@@ -20,6 +20,8 @@ The reusable helper prompt lives in `.github/prompts/`:
 
 - `Install TCTBP Agent Infrastructure Into Another Repository.prompt.md`
 
+The explicit local-only trigger for that prompt in this canonical repo is `reconcile-tctbp <absolute-target-repo-path>`.
+
 Use these together.
 
 - `.github/agents/TCTBP.agent.md` is the runtime entry point for explicit TCTBP trigger routing.
@@ -44,7 +46,7 @@ For a brand new project, the simplest workflow is:
 3. Copy `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` if you want the target repository to keep the same reusable application prompt locally.
 4. Open the new repository in VS Code.
 5. Start a Copilot chat in that repository.
-6. Use `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` in `NEW_REPOSITORY` or `AUTO` mode, or explicitly ask Copilot to read `.github/copilot-instructions.md` and customise the installed runtime files for the new project.
+6. Use `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` in `NEW_REPOSITORY` or `AUTO` mode, or explicitly ask Copilot to run `reconcile-tctbp <absolute-target-repo-path>` and customise the installed runtime files for the new project.
 
 That explicit chat step matters. Do not assume Copilot will automatically infer that the placeholders should be replaced just because the files exist.
 
@@ -55,7 +57,7 @@ For a repository that already has older or locally customised TCTBP files, do no
 Instead:
 
 1. Create a dedicated update branch in the recipient repository.
-2. Use `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` in `AUTO` mode so Copilot can detect whether the recipient repository is new, missing the agent runtime, or already using the agent runtime and just needs a refresh.
+2. Use `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` in `AUTO` mode, typically via `reconcile-tctbp <absolute-target-repo-path>`, so Copilot can detect whether the recipient repository is new, missing the agent runtime, or already using the agent runtime and just needs a refresh.
 3. Open the recipient repository in VS Code.
 4. Ask Copilot to use that prompt to read the canonical TCTBP files from this repository and compare them with the local runtime files.
 5. Have Copilot merge forward the generic workflow and safety improvements while preserving the recipient repository's repo-specific values, commands, docs paths, deploy settings, and intentional deviations.
@@ -107,6 +109,8 @@ The reusable prompt now lives in `.github/prompts/`:
 
 - `Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` for installing or refreshing TCTBP in another repository across the new, missing-agent, and existing-agent cases
 
+In this canonical repo, invoke that prompt through the explicit local-only trigger `reconcile-tctbp <absolute-target-repo-path>`.
+
 ### For New Repositories, Missing Agent Runtime, Or Existing Runtime Refresh
 
 The reusable installer prompt lives at `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md`.
@@ -132,7 +136,7 @@ When TCTBP is applied successfully, the target repository should receive or reta
 From the canonical TCTBP repository, start with a prompt like this:
 
 ```text
-Use `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md`.
+reconcile-tctbp /absolute/path/to/target-repo
 
 Canonical TCTBP repository path: /home/ken/Documents/development/repos/TCTBP
 Target repository path: /absolute/path/to/target-repo
@@ -152,7 +156,7 @@ That prompt gives Copilot a single entry point while still keeping the internal 
 My recommendation is:
 
 1. Point Copilot in this canonical repository at the target repository path.
-2. Use `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` in `AUTO` mode.
+2. Use `reconcile-tctbp <absolute-target-repo-path>`, which routes into `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` in `AUTO` mode by default.
 3. Let Copilot inspect the target repository and choose the correct install-or-refresh path.
 4. Review the result with focus on commands, docs paths, deployment settings, version files, and whether the hook layer should stay enabled.
 
@@ -178,7 +182,7 @@ For a new repository with no code yet:
 1. Initialise the repo.
 2. Copy or apply the TCTBP runtime files.
 3. Open the repo in VS Code.
-4. Ask Copilot to apply TCTBP using the consolidated prompt or equivalent structured input.
+4. Ask Copilot to run `reconcile-tctbp <absolute-target-repo-path>` or use the consolidated prompt with equivalent structured input.
 5. Review and commit the customised workflow files.
 6. Only then start asking Copilot to scaffold application code.
 

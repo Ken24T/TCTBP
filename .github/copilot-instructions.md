@@ -29,6 +29,8 @@ When these files change, keep them aligned. Avoid duplicating logic in one file 
 
 Reusable helper prompts for downstream use live in `.github/prompts/`. Keep them aligned with the current template workflow and update them when the onboarding or migration process changes.
 
+In this canonical repository, the consolidated cross-repo application prompt is expected to be discoverable through the explicit local-only trigger `reconcile-tctbp <absolute-target-repo-path>`.
+
 ## Template Design Rules
 
 Use these rules whenever you edit or extend the template set.
@@ -112,5 +114,6 @@ If the custom agent or hook layer is changed, keep the runtime files aligned wit
 - Add or update examples only when they clarify how a downstream repository should fill in the template.
 - Keep the consolidated application prompt current when the recommended onboarding or migration workflow changes:
 	- `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md`
+- Keep the prompt frontmatter and examples aligned with the `reconcile-tctbp <absolute-target-repo-path>` trigger when that cross-repo reconciliation flow changes.
 - Document any schema change in both the JSON profile and the surrounding Markdown guidance.
 - Preserve Australian English only where the downstream repository explicitly chooses it; do not assume a locale by default.

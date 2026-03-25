@@ -1,13 +1,12 @@
----
-description: "Use when the canonical TCTBP repository needs to apply TCTBP to another repository by auto-detecting whether it is a brand new repo, an existing repo with workflow files but no agent runtime, or an existing repo with agent infrastructure that needs to be refreshed from the canonical state."
-name: "Apply TCTBP To Another Repository"
-argument-hint: "Canonical repo ref, target repository path, target state or AUTO, backup mode, and whether to include the hook layer"
+description: "Use when the user explicitly asks for reconcile-tctbp <absolute-target-repo-path> so the canonical TCTBP repository can inspect another repository, detect whether it is new, missing the agent runtime, or already using the agent runtime, and then reconcile that repository's TCTBP state safely."
+name: "reconcile-tctbp"
+argument-hint: "Absolute target repository path, plus optional canonical ref, target state or AUTO, backup mode, and whether to include the hook layer"
 agent: "agent"
 ---
 
-# Apply TCTBP To Another Repository
+# reconcile-tctbp
 
-Use this prompt inside the canonical TCTBP repository when you want Copilot to install, adapt, or refresh the TCTBP workflow and optional agent runtime in a different repository.
+Use this prompt inside the canonical TCTBP repository when you want Copilot to handle an explicit `reconcile-tctbp <absolute-target-repo-path>` request and install, adapt, or refresh the TCTBP workflow and optional agent runtime in a different repository.
 
 ## Goal
 
@@ -233,7 +232,7 @@ When finished, report:
 ## Example Invocation
 
 ```text
-Apply TCTBP to another repository.
+reconcile-tctbp /absolute/path/to/target-repo
 
 Canonical TCTBP repository path: /home/ken/Documents/development/repos/TCTBP
 Target repository path: /absolute/path/to/target-repo
