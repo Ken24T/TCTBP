@@ -14,19 +14,31 @@ Customise the TCTBP template files for the new repository without weakening the 
 
 Before editing anything, read these files:
 
+- `.github/agents/TCTBP.agent.md`
 - `.github/copilot-instructions.md`
 - `.github/TCTBP.json`
 - `.github/TCTBP Agent.md`
 - `.github/TCTBP Cheatsheet.md`
+
+If the template set includes the hook layer, also read:
+
+- `.github/hooks/tctbp-safety.json`
+- `scripts/tctbp-pretool-hook.js`
 
 ## Files To Edit
 
 Customise these files for the new repository:
 
+- `.github/agents/TCTBP.agent.md`
 - `.github/TCTBP.json`
 - `.github/TCTBP Agent.md`
 - `.github/TCTBP Cheatsheet.md`
 - `.github/copilot-instructions.md`
+
+If the target repository should include the hook layer, also customise:
+
+- `.github/hooks/tctbp-safety.json`
+- `scripts/tctbp-pretool-hook.js`
 
 ## Required Behaviour
 
@@ -36,9 +48,10 @@ Customise these files for the new repository:
 4. Keep the TCTBP workflow generic, durable, and safe.
 5. Do not hard-code language, framework, package manager, deployment target, or docs paths unless they were explicitly provided.
 6. Preserve the no-code-loss guarantees across `ship`, `publish`, `handover`, `resume`, `branch`, `deploy`, `status`, and `abort`.
-7. Keep the behavioural guidance in Markdown aligned with the machine-readable profile in `.github/TCTBP.json`.
-8. Validate JSON and Markdown after editing.
-9. Keep the trigger semantics distinct: `ship` for formal release, `publish` for safe branch publication without release side effects, `handover` for end-of-day shared-state publication plus metadata refresh, and `resume` for start-of-day restore.
+7. Keep the custom agent entry point aligned with the machine-readable profile in `.github/TCTBP.json` and the Markdown workflow guidance.
+8. If the hook layer is included, keep `.github/hooks/tctbp-safety.json` and `scripts/tctbp-pretool-hook.js` aligned with the installed docs and verify whether `node` or `nodejs` is available on `PATH`.
+9. Validate JSON and Markdown after editing.
+10. Keep the trigger semantics distinct: `ship` for formal release, `publish` for safe branch publication without release side effects, `handover` for end-of-day shared-state publication plus metadata refresh, and `resume` for start-of-day restore.
 
 ## What You Must Not Guess
 
@@ -51,6 +64,8 @@ Do not guess any of the following:
 - documentation review paths
 - branch naming preferences
 - locale conventions
+
+If the hook layer is included, do not guess whether `node` or `nodejs` is available; inspect or leave the runtime requirement clearly noted.
 
 If any of those are missing, ask for confirmation or leave the template in an explicitly unresolved but clean state.
 
@@ -88,11 +103,15 @@ Project details:
 - Branch naming preferences: <BRANCH_NAMING_PREFERENCES_OR_DEFAULT>
 - Deploy enabled: <YES_OR_NO>
 - Any repo-specific constraints or guard rails: <ADDITIONAL_CONSTRAINTS_OR_NONE>
+- Include hook layer: <YES_OR_NO>
+- Node or nodejs available on PATH: <YES_OR_NO_OR_UNKNOWN>
 ```
 
 ## Task
 
 Read the TCTBP template files, customise them for this repository using the project details above, and keep the workflow logic consistent across all files.
+
+If the hook layer is enabled, install and adapt both `.github/hooks/tctbp-safety.json` and `scripts/tctbp-pretool-hook.js` instead of leaving the docs referring to missing runtime files.
 
 When adapting the workflow, preserve the intended trigger separation:
 
@@ -108,6 +127,7 @@ When you finish:
 2. List any values that still need confirmation.
 3. Call out any placeholders intentionally left unresolved.
 4. Mention any workflow rules that you chose to keep at their default values.
+5. State whether the hook layer was included and whether `node` or `nodejs` was confirmed.
 
 ## Preferred Output Style
 

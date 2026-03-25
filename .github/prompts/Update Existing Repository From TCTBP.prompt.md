@@ -27,10 +27,16 @@ Any local workflow deviations that are intentional and should not be normalised 
 
 Read these files from the canonical TCTBP repository first:
 
+- `.github/agents/TCTBP.agent.md`
 - `.github/TCTBP.json`
 - `.github/TCTBP Agent.md`
 - `.github/TCTBP Cheatsheet.md`
 - `.github/copilot-instructions.md`
+
+If the canonical repository includes the hook layer, also read:
+
+- `.github/hooks/tctbp-safety.json`
+- `scripts/tctbp-pretool-hook.js`
 
 Then read the local versions of the same files in the recipient repository if they exist.
 
@@ -42,7 +48,7 @@ Then read the local versions of the same files in the recipient repository if th
 4. Merge forward generic workflow and safety improvements while preserving repo-specific settings.
 5. Stop and explain any conflict that cannot be resolved safely from the available evidence.
 6. Prefer minimal diffs over broad rewrites.
-7. Keep the four workflow files aligned with each other after the update.
+7. Keep the workflow files, custom agent entry point, and optional hook layer aligned with each other after the update.
 
 ## Backup Requirement
 
@@ -58,10 +64,16 @@ Before editing anything:
 
 Update these files in the recipient repository when present:
 
+- `.github/agents/TCTBP.agent.md`
 - `.github/TCTBP.json`
 - `.github/TCTBP Agent.md`
 - `.github/TCTBP Cheatsheet.md`
 - `.github/copilot-instructions.md`
+
+If the recipient repository should include the hook layer, also update:
+
+- `.github/hooks/tctbp-safety.json`
+- `scripts/tctbp-pretool-hook.js`
 
 If one of these files is missing locally, create it from the canonical template and adapt it to the recipient repository instead of dropping in raw template defaults.
 
@@ -78,6 +90,7 @@ Do not overwrite repo-specific values such as:
 - documentation review paths
 - branch naming preferences when intentionally customised
 - locale or writing conventions when intentionally customised
+- whether the hook layer is intentionally enabled or omitted
 - any explicit repo-specific constraints already captured in the local workflow files
 
 ## What Should Usually Be Merged Forward
@@ -106,12 +119,14 @@ When present in the canonical repository, prefer merging forward improvements su
 5. Create the requested backup or recovery path before modifying files.
 6. Edit the local files by merging forward the canonical workflow logic without erasing local repo-specific instructions.
 7. Keep `.github/TCTBP.json`, `.github/TCTBP Agent.md`, `.github/TCTBP Cheatsheet.md`, and `.github/copilot-instructions.md` consistent with each other.
-8. If the canonical repository contains placeholders that do not belong in the recipient repository, replace them with the recipient repository's existing values or leave them unresolved only when the local repo truly lacks the needed information.
-9. If the local repository intentionally diverges from the canonical workflow, preserve that divergence unless it weakens a core safety guarantee.
-10. If a local divergence weakens no-code-loss, resume safety, or sync safety, call it out explicitly and propose the smallest safe correction.
-11. Validate the updated local files using the recipient repository's available validation, lint, test, or diagnostics steps.
-12. Summarise exactly what was changed, what was preserved, what was backed up, and what still needs human review.
-13. When the local repository adopts the new trigger model, keep `ship`, `publish`, `handover`, and `resume` semantically distinct instead of overloading one workflow with multiple operator intents.
+8. Keep `.github/agents/TCTBP.agent.md` aligned with the local trigger model and repo description.
+9. If the hook layer is installed, keep `.github/hooks/tctbp-safety.json` and `scripts/tctbp-pretool-hook.js` aligned with the installed docs and verify whether `node` or `nodejs` is available on `PATH`.
+10. If the canonical repository contains placeholders that do not belong in the recipient repository, replace them with the recipient repository's existing values or leave them unresolved only when the local repo truly lacks the needed information.
+11. If the local repository intentionally diverges from the canonical workflow, preserve that divergence unless it weakens a core safety guarantee.
+12. If a local divergence weakens no-code-loss, resume safety, or sync safety, call it out explicitly and propose the smallest safe correction.
+13. Validate the updated local files using the recipient repository's available validation, lint, test, or diagnostics steps.
+14. Summarise exactly what was changed, what was preserved, what was backed up, and what still needs human review.
+15. When the local repository adopts the new trigger model, keep `ship`, `publish`, `handover`, and `resume` semantically distinct instead of overloading one workflow with multiple operator intents.
 
 ## What You Must Not Do
 
