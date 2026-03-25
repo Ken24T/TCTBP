@@ -153,11 +153,23 @@ My recommendation is:
 
 1. Point Copilot in this canonical repository at the target repository path.
 2. Use `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md` in `AUTO` mode.
+3. Let Copilot inspect the target repository and choose the correct install-or-refresh path.
+4. Review the result with focus on commands, docs paths, deployment settings, version files, and whether the hook layer should stay enabled.
+
+That is better than asking Copilot something broad like "set this repo up" because it anchors the conversation in the template contract before implementation starts.
+
+## What Copilot Should Not Guess
 
 During onboarding, Copilot should not guess:
 
 - test or release commands
 - version source of truth
+- deploy commands
+- docs review paths
+- branch naming preferences
+- locale conventions
+
+If those are unknown, the correct behaviour is to leave placeholders, use an allowed null field, or ask for confirmation.
 
 ## Suggested Minimal Startup Sequence
 
@@ -180,3 +192,7 @@ That means:
 
 - project commands are defined early
 - docs expectations are defined early
+- release and sync behaviour is defined early
+- future `ship`, `publish`, `handover`, `resume`, `deploy`, `status`, `abort`, and `branch` actions have a repo-specific profile to follow
+
+In practice, this is the cleanest way to onboard Copilot from the start of a new project without making the workflow brittle or overly dependent on a single old repository.
