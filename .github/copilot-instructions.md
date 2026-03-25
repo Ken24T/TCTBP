@@ -17,6 +17,9 @@ When editing this repository, prefer general rules, placeholders, and examples o
 
 The TCTBP template set is defined by:
 
+- `.github/agents/TCTBP.agent.md` for the runtime entry point that routes explicit TCTBP trigger phrases to the specialised workflow agent
+- `.github/hooks/tctbp-safety.json` for optional runtime approval enforcement on risky git terminal commands
+- `scripts/tctbp-pretool-hook.js` for the hook logic used by the optional TCTBP safety hook
 - `.github/TCTBP.json` for the machine-readable project profile schema and workflow policy
 - `.github/TCTBP Agent.md` for behavioural rules, guard rails, and workflow intent
 - `.github/TCTBP Cheatsheet.md` for the operator quick reference
@@ -37,6 +40,7 @@ Use these rules whenever you edit or extend the template set.
 5. Prefer prose over configuration when a rule depends on judgement or safety context.
 6. Never hard-code a language, framework, packaging tool, or deployment target unless it is clearly marked as an example.
 7. Preserve the no-code-loss guarantees across `ship`, `publish`, `handover`, `resume`, `branch`, `deploy`, `status`, and `abort`.
+8. If the hook layer is included in downstream repos, keep the hook config and script narrow, auditable, and optional.
 
 ## Downstream Customisation Checklist
 
@@ -99,6 +103,7 @@ Supported triggers remain:
 - `branch <new-branch-name>`
 
 For mutating workflows, keep detached-HEAD stop conditions, branch-name validation, publication safety, branch-closeout merge confirmation, and handover metadata safety aligned across the JSON profile and Markdown guidance.
+If the custom agent or hook layer is changed, keep the runtime files aligned with the Markdown and JSON guidance that downstream repos will consume.
 
 ## Editing Guidance
 
@@ -106,6 +111,7 @@ For mutating workflows, keep detached-HEAD stop conditions, branch-name validati
 - Keep the files copyable into a fresh repository with minimal follow-up changes.
 - Add or update examples only when they clarify how a downstream repository should fill in the template.
 - Keep both prompt files current when the recommended onboarding or migration workflow changes:
+	- `.github/prompts/Install TCTBP Agent Infrastructure Into Another Repository.prompt.md`
 	- `.github/prompts/Onboard New Repository.prompt.md`
 	- `.github/prompts/Update Existing Repository From TCTBP.prompt.md`
 - Document any schema change in both the JSON profile and the surrounding Markdown guidance.
