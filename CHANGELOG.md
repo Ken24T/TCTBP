@@ -8,6 +8,12 @@ The format is based on Keep a Changelog.
 
 - No unreleased changes.
 
+## [v0.2.1] - 2026-03-26
+
+- Consolidate the cross-repository TCTBP application prompts behind the explicit `reconcile-tctbp <absolute-target-repo-path>` trigger.
+- Add the TCTBP agent runtime entry point and optional pre-tool safety hook for guarded workflow execution.
+- Tighten workflow guidance, branch and publish rules, and template-repository validation coverage for the canonical runtime files.
+
 ## [v0.2.0] - 2026-03-22
 
 - Harden TCTBP workflow safeguards around handover, status, branch transitions, detached HEAD checks, and recovery conditions.
@@ -19,6 +25,7 @@ The format is based on Keep a Changelog.
 - Establish live TCTBP project profile for the template repository.
 - Add validation script, version file, and onboarding documentation.
 
-[Unreleased]: https://github.com/Ken24T/TCTBP/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/Ken24T/TCTBP/compare/v0.2.1...HEAD
+[v0.2.1]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.1
 [v0.2.0]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.0
 [v0.1.1]: https://github.com/Ken24T/TCTBP/releases/tag/v0.1.1
