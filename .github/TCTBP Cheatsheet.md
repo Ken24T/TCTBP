@@ -83,6 +83,35 @@ Notes:
 - Does not update handover metadata
 - Stops if the branch is dirty, behind, diverged, or detached
 
+### `checkpoint` / `checkpoint please`
+
+Purpose:
+Create a durable local-only checkpoint commit on the current branch without release or sync side effects.
+
+Attempts to:
+
+- preflight the current branch and working tree state
+- stop if `HEAD` is detached, the tree is clean, conflicts exist, or a merge/rebase/cherry-pick/revert is in progress
+- stage the current non-ignored tracked and new files
+- create a clearly marked non-release local commit
+- confirm that nothing was pushed, tagged, or handed over
+
+Use when:
+
+- you want safer local slice checkpoints during a long session
+- you do not want to sit on uncommitted work for long
+- you want a durable local save before deciding whether to `publish`, `handover`, or `ship`
+
+Notes:
+
+- Does not push
+- Does not bump version
+- Does not create a tag
+- Does not update handover metadata
+- Does not reconcile with origin
+- May leave the branch ahead of or further diverged from origin because it is local-only
+- Handover may reuse a recent matching checkpoint commit instead of creating another one
+
 ### `handover` / `handover please`
 
 Purpose:
@@ -120,6 +149,7 @@ Notes:
 - Keep the handover table to five rows focused on branch sync, latest tag, metadata branch publication, metadata consistency, and final baseline state
 - Use a short completion line after the table to confirm the handed-over branch and commit
 - Update the metadata branch using a secondary worktree or another equally non-destructive method
+- May reuse a recent matching standalone `checkpoint` commit instead of creating another one
 - Stops if `HEAD` is detached
 
 Use when:
@@ -205,12 +235,12 @@ Read-only operator snapshot of branch state, sync status, tags, and recommended 
 
 Use when:
 
-- you want to know whether `resume`, `publish`, `handover`, `ship`, or `abort` is needed before doing anything else
+- you want to know whether `resume`, `checkpoint`, `publish`, `handover`, `ship`, or `abort` is needed before doing anything else
 
 Notes:
 
 - This is the trigger that should show the fuller four-column table: `Origin`, `Local`, `Status`, `Action(s)`
-- Table should explicitly include branch state, default-branch state, tag state, ahead/behind counts, working tree, and whether `resume`, `publish`, `ship`, or `handover` is recommended
+- Table should explicitly include branch state, default-branch state, tag state, ahead/behind counts, working tree, and whether `resume`, `checkpoint`, `publish`, `ship`, or `handover` is recommended
 - If metadata points another machine at the wrong published branch, call that out as a resume-target mismatch
 
 ### `abort`
@@ -243,6 +273,7 @@ Attempts to:
 - stop if `HEAD` is detached
 - in next-branch mode, stop if the requested new branch name is invalid or already exists locally or remotely
 - stop instead of switching if the current branch is dirty and SHIP is declined
+- recommend `checkpoint`, then `publish` or `handover`, when the current branch is dirty and you need a non-release preservation step before retrying `branch`
 - stop instead of guessing if the source branch or local `main` is diverged
 - stop if the source branch is ahead, behind, or otherwise not yet synced to its upstream
 - recommend `publish`, `handover`, or `ship` first when the source branch is not yet published or synced
@@ -299,6 +330,7 @@ Repo-specific docs commonly reviewed:
 ## Approval Model
 
 - `ship` may create local commit and tag state as part of the workflow
+- `checkpoint` creates a local-only non-release commit and grants no push approval
 - `publish` grants approval to push the current branch for that workflow only
 - `handover` grants approval to push the current branch, metadata branch, and relevant tags for that workflow only
 - `deploy` grants approval to run the repo-defined deployment commands for that workflow only
@@ -307,6 +339,7 @@ Repo-specific docs commonly reviewed:
 ## Quick Choice
 
 - Need a release version or tag: use `ship`
+- Need a durable local-only save without publishing: use `checkpoint`
 - Need to publish the current branch without release side effects: use `publish`
 - Need to stop on one machine and resume on another safely: use `handover`, then `resume` on the next machine
 - Need the local runtime installed or refreshed: use `deploy`

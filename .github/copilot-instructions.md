@@ -41,7 +41,7 @@ Use these rules whenever you edit or extend the template set.
 4. Prefer configuration over prose when a rule must be machine-readable.
 5. Prefer prose over configuration when a rule depends on judgement or safety context.
 6. Never hard-code a language, framework, packaging tool, or deployment target unless it is clearly marked as an example.
-7. Preserve the no-code-loss guarantees across `ship`, `publish`, `handover`, `resume`, `branch`, `deploy`, `status`, and `abort`.
+7. Preserve the no-code-loss guarantees across `ship`, `checkpoint`, `publish`, `handover`, `resume`, `branch`, `deploy`, `status`, and `abort`.
 8. If the hook layer is included in downstream repos, keep the hook config and script narrow, auditable, and optional.
 
 ## Downstream Customisation Checklist
@@ -96,6 +96,7 @@ For TCTBP activation, workflow order, sync safety, docs-impact checks, versionin
 Supported triggers remain:
 
 - `ship`, `ship please`, `shipping`, `prepare release`
+- `checkpoint`, `checkpoint please`
 - `publish`, `publish please`
 - `deploy`, `deploy please`
 - `handover`, `handover please`
@@ -105,7 +106,7 @@ Supported triggers remain:
 - `branch`
 - `branch <new-branch-name>`
 
-For mutating workflows, keep detached-HEAD stop conditions, branch-name validation, publication safety, branch-closeout merge confirmation, and handover metadata safety aligned across the JSON profile and Markdown guidance.
+For mutating workflows, keep detached-HEAD stop conditions, local checkpoint safety, branch-name validation, publication safety, branch-closeout merge confirmation, and handover metadata safety aligned across the JSON profile and Markdown guidance.
 If the custom agent or hook layer is changed, keep the runtime files aligned with the Markdown and JSON guidance that downstream repos will consume.
 
 ## Editing Guidance

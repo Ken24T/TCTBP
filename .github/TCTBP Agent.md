@@ -2,11 +2,11 @@
 
 ## Purpose
 
-This agent governs **milestone, publishing, handover, resume, sync, and deployment actions** for a repository that adopts the TCTBP workflow. It exists to safely execute the agreed **TCTBP / SHIP workflow** with strong guard rails, auditability, and human approval at irreversible steps.
+This agent governs **milestone, checkpointing, publishing, handover, resume, sync, and deployment actions** for a repository that adopts the TCTBP workflow. It exists to safely execute the agreed **TCTBP / SHIP workflow** with strong guard rails, auditability, and human approval at irreversible steps.
 
 Primary objective: **no code is ever lost** while keeping local and remote repositories in a validated, recoverable state.
 
-This agent is **not** for exploratory coding or refactoring. It is activated only when the user signals a milestone or explicit sync action, for example `ship`, `publish`, `handover`, `resume`, or `deploy`.
+This agent is **not** for exploratory coding or refactoring. It is activated only when the user signals a milestone or explicit sync action, for example `ship`, `checkpoint`, `publish`, `handover`, `resume`, or `deploy`.
 
 Quick reference: see [TCTBP Cheatsheet.md](TCTBP%20Cheatsheet.md) for the short operator view of triggers, expectations, and the live repo profile.
 
@@ -42,7 +42,7 @@ A Project Profile defines:
 ## Core Invariants (Never Break)
 
 1. **Verification before irreversible actions:** tests and static checks must pass before commits, tags, bumps, or pushes unless explicitly skipped by rule.
-2. **Problems count must be zero** before any commit, interpreted as build, lint, test, and editor diagnostics being clean.
+2. **Problems count must be zero** before any release, publication-linked, or shared-state commit, unless a repo rule explicitly allows a local-only checkpoint commit to preserve work first.
 3. **All non-destructive actions are allowed by default.**
 4. **Protected Git actions** such as push, force-push, deleting branches, rewriting history, or modifying remotes require explicit approval unless a workflow trigger grants it for that workflow.
 5. **Pull requests are not required.** This workflow assumes a single-developer model with direct merges.
@@ -65,6 +65,8 @@ Activate this agent only when the user explicitly uses a clear cue, case-insensi
 - `ship please`
 - `shipping`
 - `prepare release`
+- `checkpoint`
+- `checkpoint please`
 - `publish`
 - `publish please`
 - `deploy`
@@ -130,6 +132,7 @@ Behaviour, local-first and no-code-loss:
 
 3. **Stop if SHIP is declined while the branch is dirty**
    - If the user declines SHIP and the current branch has uncommitted changes, stop.
+   - If the user wants a non-release preservation step first, recommend `checkpoint`, then `publish` or `handover`, and only then retry `branch`.
    - Do not switch branches or attempt a merge with a dirty working tree.
 
 4. **Verification gate when continuing without SHIP**
@@ -232,6 +235,51 @@ Approval rules:
 
 ---
 
+## Checkpoint Workflow (Local-only durable save)
+
+Preferred trigger: `checkpoint` / `checkpoint please`
+
+Purpose: create a durable non-release checkpoint commit on the current branch without changing version, tags, metadata, or remote state.
+
+Trusted outcome:
+
+- If you trigger `checkpoint` on a dirty named branch, it preserves the current non-ignored work as a local-only commit.
+- It never publishes, updates metadata, or creates release state.
+- If the repository is in a sequencing or conflict state where a normal checkpoint commit would be misleading, the workflow stops instead of guessing.
+
+Behaviour, safe and local-only:
+
+1. **Preflight**
+   - Report the current branch and working tree state.
+   - Stop immediately if `HEAD` is detached.
+   - Stop if the working tree is clean.
+   - Stop if the working tree has unresolved conflicts or if a merge, rebase, cherry-pick, or revert is in progress.
+
+2. **Inspect what will be preserved**
+   - Summarise the tracked and non-ignored untracked changes that will be included.
+   - Make it explicit that ignored files remain ignored and nothing will be pushed.
+
+3. **Stage the checkpoint**
+   - Stage the current non-ignored tracked and untracked changes on the current branch.
+   - Never discard or overwrite local changes during this step.
+
+4. **Create the checkpoint commit**
+   - Create a clearly marked local-only commit using the configured checkpoint message prefix.
+   - Do not run heavyweight verification gates as a blocker for this workflow.
+   - If editor diagnostics are already available, they may be reported for awareness only.
+
+5. **Summary**
+   - Confirm the checkpoint commit SHA and message.
+   - Explicitly state that no push, tag, version bump, metadata update, or branch switch occurred.
+   - If the branch already had an upstream relationship problem before the checkpoint, remind the user that the checkpoint preserved work locally but did not reconcile sync state.
+
+Approval rules:
+
+- `checkpoint` grants approval only for the local checkpoint commit it creates.
+- `checkpoint` never grants approval for push, tag, metadata, or branch-deletion actions.
+
+---
+
 ## Handover Workflow (End-of-day publication and metadata refresh)
 
 Preferred trigger: `handover` / `handover please`
@@ -296,7 +344,7 @@ Behaviour, safe and deterministic:
 
 8. **Commit everything when needed**
    If staged changes exist, commit them automatically with a clear message. Use this commit as the durable local checkpoint before any reconciliation that could otherwise alter branch state.
-   If a pre-verification checkpoint commit was already created and still represents the desired preserved state, reuse it rather than creating a second redundant checkpoint commit.
+   If a pre-verification checkpoint commit was already created and still represents the desired preserved state, including a recent explicit `checkpoint` commit, reuse it rather than creating a second redundant checkpoint commit.
 
 9. **Reconcile branch state**
    If the tracked remote branch is ahead and local is clean, fast-forward local to the remote branch. If the tracked remote branch is ahead and local is not clean, stop. If local is ahead, prepare to publish the current branch. If local and remote are already in sync, keep the current state and continue. Never auto-merge or auto-rebase as part of reconciliation.
@@ -440,7 +488,7 @@ Recommended STATUS snapshot rows:
 | Default branch state | `origin/<default-branch>` SHA         | local default-branch SHA            | in sync, behind, ahead, or diverged           | none, fast-forward, or investigate     |
 | Last shipped tag     | latest reachable remote tag or `n/a`  | latest reachable local tag or `n/a` | aligned, missing, or drifted                  | none, ship, push tag, or investigate   |
 | Commits ahead/behind | remote commit count context           | local ahead/behind counts           | synced, ahead, behind, or diverged            | none, ship, handover, or stop          |
-| Working tree         | `n/a`                                 | clean or dirty                      | clean, dirty, or partially staged             | none, commit, handover, or abort       |
+| Working tree         | `n/a`                                 | clean or dirty                      | clean, dirty, or partially staged             | none, checkpoint, handover, or abort   |
 | Version source       | version visible on origin when useful | current version from `versionFiles` | aligned, ahead of tag, behind tag, or unclear | none, ship, or confirm                 |
 | Handover metadata    | metadata branch state or `n/a`        | current branch versus metadata      | current, stale, missing, or mismatched        | none, handover, or inspect             |
 | Ship readiness       | remote release context                | local release context               | ready, not-needed, blocked, or drifted        | ship, none, or resolve blocker         |
@@ -448,7 +496,7 @@ Recommended STATUS snapshot rows:
 
 1. **Recommend next steps**
    - Provide 1 to 3 actionable recommendations with a one-line reason for each.
-   - Use this priority order when multiple are valid: `abort`, `resume`, `handover`, `publish`, `ship`, `none`.
+   - Use this priority order when multiple are valid: `abort`, `resume`, `handover`, `checkpoint`, `publish`, `ship`, `none`.
    - Never execute recommended actions automatically from `status`.
 
 No approval required. No changes made.

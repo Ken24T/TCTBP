@@ -197,6 +197,6 @@ That means:
 - project commands are defined early
 - docs expectations are defined early
 - release and sync behaviour is defined early
-- future `ship`, `publish`, `handover`, `resume`, `deploy`, `status`, `abort`, and `branch` actions have a repo-specific profile to follow
+- future `ship`, `checkpoint`, `publish`, `handover`, `resume`, `deploy`, `status`, `abort`, and `branch` actions have a repo-specific profile to follow
 
 In practice, this is the cleanest way to onboard Copilot from the start of a new project without making the workflow brittle or overly dependent on a single old repository.

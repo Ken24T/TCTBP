@@ -6,7 +6,8 @@ The format is based on Keep a Changelog.
 
 ## [Unreleased]
 
-- No unreleased changes.
+- Add a local-only `checkpoint` workflow for durable non-release slice saves without push, tag, version, or metadata side effects.
+- Align the canonical TCTBP policy, guidance, runtime trigger entry point, and onboarding docs with the new checkpoint trigger.
 
 ## [v0.2.2] - 2026-03-26
 
