@@ -102,6 +102,7 @@ Supported triggers remain:
 - `resume`, `resume please`
 - `status`, `status please`
 - `abort`
+- `branch`
 - `branch <new-branch-name>`
 
 For mutating workflows, keep detached-HEAD stop conditions, branch-name validation, publication safety, branch-closeout merge confirmation, and handover metadata safety aligned across the JSON profile and Markdown guidance.

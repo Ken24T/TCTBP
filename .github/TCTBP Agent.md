@@ -76,6 +76,7 @@ Activate this agent only when the user explicitly uses a clear cue, case-insensi
 - `status`
 - `status please`
 - `abort`
+- `branch`
 - `branch <new-branch-name>`
 
 Do **not** auto-trigger based on context or guesses.
@@ -101,9 +102,9 @@ When in doubt, treat the changeset as code.
 
 ## Branch Workflow (Convenience Command)
 
-### `branch <new-branch-name>`
+### `branch` and `branch <new-branch-name>`
 
-Purpose: close out the current branch cleanly and start the next one.
+Purpose: close out the current branch cleanly and either stop on `main` or start the next branch.
 
 Behaviour, local-first and remote-safe:
 
@@ -118,8 +119,9 @@ Behaviour, local-first and no-code-loss:
 1. **Preflight**
    - Report the current branch, working tree state, and upstream tracking state if one exists.
    - Stop immediately if `HEAD` is detached; branch closeout must operate on a named branch.
-   - Validate the requested branch name before doing any other workflow step.
-   - Stop if the requested branch name is invalid, equals the default branch, already exists locally, already exists on origin, or would collide by case on a case-insensitive filesystem.
+   - Determine whether the request is closeout-only mode (`branch`) or next-branch mode (`branch <new-branch-name>`).
+   - In next-branch mode, validate the requested branch name before doing any other workflow step.
+   - In next-branch mode, stop if the requested branch name is invalid, equals the default branch, already exists locally, already exists on origin, or would collide by case on a case-insensitive filesystem.
    - Determine whether the current branch is the default branch or a non-default work branch.
 
 2. **Assess whether SHIP is needed on the current branch**
@@ -138,7 +140,7 @@ Behaviour, local-first and no-code-loss:
    - If the source branch has an upstream and is diverged from it, stop and ask the user to resolve that state explicitly.
    - If the source branch has an upstream and is behind it, stop and recommend running `handover` or another explicit sync step first.
    - If the source branch has an upstream and is ahead of it, stop and recommend publishing that branch first by running `publish`, `handover`, or `ship`.
-   - If the source branch has no upstream, stop and recommend creating or publishing the upstream first with `publish`, `handover`, or `ship` before using `branch <new-branch-name>`.
+   - If the source branch has no upstream, stop and recommend creating or publishing the upstream first with `publish`, `handover`, or `ship` before using `branch` or `branch <new-branch-name>`.
 
 6. **Prepare the default branch safely**
    - Ensure the working tree is clean before checking out the default branch from `TCTBP.json`.
@@ -148,9 +150,9 @@ Behaviour, local-first and no-code-loss:
 
 7. **Confirm merge into the default branch when needed**
    - If the current branch is already the default branch, skip this confirmation and continue from the updated default branch.
-   - Otherwise ask whether the current published branch should be merged into the default branch before creating the next branch.
+   - Otherwise ask whether the current published branch should be merged into the default branch before closeout continues.
    - Treat `yes` as the expected default answer for the normal sole-developer closeout path.
-   - If the user declines the merge, stop and explain that the branch workflow will not create the next branch from the default branch as though the source branch had already been integrated.
+   - If the user declines the merge, stop and explain that the branch workflow will not treat the source branch as integrated into the default branch.
    - When stopping because the merge was declined, recommend the exact alternative that fits the state: continue on the current branch, `publish`, or `handover`.
 
 8. **Merge the source branch into the default branch when needed**
@@ -158,25 +160,27 @@ Behaviour, local-first and no-code-loss:
    - Otherwise merge the source branch into the default branch using a non-destructive merge after explicit confirmation.
    - Stop on conflicts and leave the repository in a recoverable state for manual resolution.
 
-9. **Verify the branch transition before creating the next branch**
+9. **Verify the branch transition before closeout completes**
    - Confirm the source branch tip commit is reachable from the default branch before proceeding.
    - If that cannot be confirmed, stop.
 
-10. **Create and switch to the new branch** from the updated default branch.
+10. **Create and switch to the new branch when requested** from the updated default branch.
+   - In closeout-only mode, stop here and leave the repository on the updated default branch.
+   - In next-branch mode, create and switch to the requested new branch from the updated default branch.
    - Stop if the new branch cannot be created or checked out safely.
 
 11. **Cleanup, optional and last**
-   Consider deleting the old branch only after the merge succeeded, the source branch tip is reachable from the default branch, and the new branch exists and is checked out. Ask the user whether to delete the old branch locally and remotely. Do not assume the old branch was a feature branch; apply the same rule to `fix/`, `docs/`, `infrastructure/`, or other work branches.
+   Consider deleting the old branch only after the merge succeeded and the source branch tip is reachable from the default branch. In next-branch mode, also require that the new branch exists and is checked out. Ask the user whether to delete the old branch locally and remotely. Do not assume the old branch was a feature branch; apply the same rule to `fix/`, `docs/`, `infrastructure/`, or other work branches.
 
 12. **Remote safety**
    Any push requires explicit approval. Any branch deletion requires explicit approval.
 
 13. **Summary**
-   Confirm the source branch, whether merge into the default branch was confirmed, the resulting default-branch state, the new branch name, and whether any push or deletion occurred. Explicitly state whether the workflow stopped for safety, stopped because merge into the default branch was declined, skipped the merge because the workflow started on the default branch, or completed the full transition without code loss. If the workflow stopped because the source branch was not yet published, say so explicitly and recommend the exact sync step needed before retrying.
+   Confirm the source branch, whether merge into the default branch was confirmed, the resulting default-branch state, whether the workflow ran in closeout-only mode or next-branch mode, the new branch name when one was requested, and whether any push or deletion occurred. Explicitly state whether the workflow stopped for safety, stopped because merge into the default branch was declined, skipped the merge because the workflow started on the default branch, completed closeout-only mode without code loss, or completed the full transition without code loss. If the workflow stopped because the source branch was not yet published, say so explicitly and recommend the exact sync step needed before retrying.
 
 Versioning interaction:
 
-- **Minor (Y) bump occurs on the first SHIP on the new branch**, not at branch creation, and only for branch prefixes listed in `minorBranchPrefixes`.
+- **Minor (Y) bump occurs on the first SHIP on the new branch**, not during closeout-only mode or at branch creation, and only for branch prefixes listed in `minorBranchPrefixes`.
 
 ---
 

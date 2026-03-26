@@ -74,7 +74,7 @@ Attempts to:
 Use when:
 
 - you want to sync the current branch to origin without bumping version or creating a tag
-- you want to publish a clean fresh branch before using `branch <new-branch-name>` later
+- you want to publish a clean fresh branch before using `branch` or `branch <new-branch-name>` later
 
 Notes:
 
@@ -232,16 +232,16 @@ Recovery expectations:
 - preserve unpublished work before cleanup when needed
 - never rewrite history or force-push without explicit extra confirmation
 
-### `branch <new-branch-name>`
+### `branch` and `branch <new-branch-name>`
 
 Purpose:
-Close out current work cleanly and start the next branch.
+Close out current work cleanly and either stop on `main` or start the next branch.
 
 Attempts to:
 
 - assess whether the current branch should be shipped first
 - stop if `HEAD` is detached
-- stop if the requested new branch name is invalid or already exists locally or remotely
+- in next-branch mode, stop if the requested new branch name is invalid or already exists locally or remotely
 - stop instead of switching if the current branch is dirty and SHIP is declined
 - stop instead of guessing if the source branch or local `main` is diverged
 - stop if the source branch is ahead, behind, or otherwise not yet synced to its upstream
@@ -249,7 +249,8 @@ Attempts to:
 - ask for explicit confirmation before merging the current non-default branch back into `main`
 - merge the current branch into local `main` when the current branch is not already `main`
 - skip the merge step when you already start on `main`
-- create and switch to the new branch from updated local `main`
+- in bare `branch` mode, stop on updated local `main`
+- in `branch <new-branch-name>` mode, create and switch to the new branch from updated local `main`
 
 Safety expectation:
 
@@ -257,7 +258,7 @@ Safety expectation:
 - never uses stash, reset, rebase, force-push, or destructive checkout as part of the branch workflow
 - requires the source branch to be published before branch closeout continues
 - treats merge back to `main` as the expected default path, but stops if that merge is explicitly declined
-- only offers old-branch deletion after the merge and new-branch creation have both succeeded
+- only offers old-branch deletion after the merge succeeded and source reachability from `main` is confirmed; next-branch mode also requires new-branch creation first
 
 ## Handover Promise
 
@@ -311,4 +312,5 @@ Repo-specific docs commonly reviewed:
 - Need the local runtime installed or refreshed: use `deploy`
 - Need a quick repo state check: use `status`
 - Need to recover from partial workflow state: use `abort`
+- Need to close out current work and stop on `main`: use `branch`
 - Need to start the next branch: use `branch <new-branch-name>`
