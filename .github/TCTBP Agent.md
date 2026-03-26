@@ -269,9 +269,27 @@ Behaviour, safe and local-only:
    - If editor diagnostics are already available, they may be reported for awareness only.
 
 5. **Summary**
+   - Render a concise four-column summary table using `Origin`, `Local`, `Status`, and `Action(s)`.
+   - Keep the table focused on the actual commit transition and the resulting local-only baseline.
    - Confirm the checkpoint commit SHA and message.
    - Explicitly state that no push, tag, version bump, metadata update, or branch switch occurred.
    - If the branch already had an upstream relationship problem before the checkpoint, remind the user that the checkpoint preserved work locally but did not reconcile sync state.
+
+Recommended CHECKPOINT summary rows:
+
+| Row                 | Origin                               | Local                              | Status                                     | Action(s)                     |
+| ------------------- | ------------------------------------ | ---------------------------------- | ------------------------------------------ | ----------------------------- |
+| Previous HEAD       | `n/a`                                | pre-checkpoint HEAD SHA and subject | recorded baseline                           | none                          |
+| Checkpoint commit   | `n/a`                                | new checkpoint SHA and subject      | created                                     | none                          |
+| Working tree result | `n/a`                                | clean or residual blocker           | clean, blocked, or needs-inspection         | none or inspect               |
+| Upstream sync state | `origin/<current-branch>` or `n/a`   | local ahead/behind counts           | synced, ahead, unpublished, or diverged     | none, publish, handover, stop |
+| Remote side effects | remote branch/tag/metadata unchanged | local checkpoint only               | unchanged                                   | none                          |
+
+Checkpoint table rules:
+
+- Keep the table to five rows unless a guard rail failure requires one extra blocker row.
+- Show the actual pre-checkpoint and new checkpoint commits, not only a prose summary.
+- Use `n/a` on the origin side for rows that are intentionally local-only.
 
 Approval rules:
 

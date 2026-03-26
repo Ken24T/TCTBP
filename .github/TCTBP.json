@@ -173,6 +173,20 @@
     ],
     "comment": "At the end of handover, render a concise five-row summary table that confirms the current branch, tag state, metadata branch publication, metadata consistency, and clean synced baseline. Keep it shorter than status and focused on the handover result."
   },
+  "checkpointReport": {
+    "enabled": true,
+    "stage": "summary",
+    "format": "table",
+    "columns": ["Origin", "Local", "Status", "Action(s)"],
+    "recommendedRows": [
+      "previous-head-commit",
+      "checkpoint-commit",
+      "working-tree-result",
+      "upstream-sync-state",
+      "remote-side-effects"
+    ],
+    "comment": "At the end of checkpoint, render a concise summary table focused on the actual commit transition and the resulting local-only baseline. Include the previous HEAD commit, the new checkpoint commit, the resulting working-tree state, the branch sync state, and an explicit confirmation that remote state did not change. Use 'n/a' where no meaningful origin-side value exists."
+  },
   "branch": {
     "enabled": true,
     "purpose": "Safely close out the current published branch, reconcile the default branch, and either stop on the default branch or create the next work branch without losing code.",

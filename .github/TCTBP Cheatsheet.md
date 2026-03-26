@@ -94,6 +94,7 @@ Attempts to:
 - stop if `HEAD` is detached, the tree is clean, conflicts exist, or a merge/rebase/cherry-pick/revert is in progress
 - stage the current non-ignored tracked and new files
 - create a clearly marked non-release local commit
+- end with a concise four-column table showing the pre-checkpoint commit, the new checkpoint commit, resulting sync state, and explicit local-only outcome
 - confirm that nothing was pushed, tagged, or handed over
 
 Use when:
@@ -104,6 +105,8 @@ Use when:
 
 Notes:
 
+- Ends with a concise four-column table: `Origin`, `Local`, `Status`, `Action(s)`
+- The table should show the actual pre-checkpoint commit and the new checkpoint commit, not only the final SHA
 - Does not push
 - Does not bump version
 - Does not create a tag
