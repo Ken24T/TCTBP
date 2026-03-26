@@ -6,6 +6,8 @@ The format is based on Keep a Changelog.
 
 ## [Unreleased]
 
+## [v0.2.3] - 2026-03-27
+
 - Add a local-only `checkpoint` workflow for durable non-release slice saves without push, tag, version, or metadata side effects.
 - Align the canonical TCTBP policy, guidance, runtime trigger entry point, and onboarding docs with the new checkpoint trigger.
 - Add a structured checkpoint summary table that shows the pre-checkpoint and new checkpoint commits alongside the local-only post-checkpoint state.
@@ -33,7 +35,8 @@ The format is based on Keep a Changelog.
 - Establish live TCTBP project profile for the template repository.
 - Add validation script, version file, and onboarding documentation.
 
-[Unreleased]: https://github.com/Ken24T/TCTBP/compare/v0.2.2...HEAD
+[Unreleased]: https://github.com/Ken24T/TCTBP/compare/v0.2.3...HEAD
+[v0.2.3]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.3
 [v0.2.2]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.2
 [v0.2.1]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.1
 [v0.2.0]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.0
