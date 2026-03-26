@@ -687,7 +687,8 @@ For docs-only or infrastructure-only changes, skip code-level checks according t
 
 **Versioning rules:**
 
-- **Z (patch)** increments on every SHIP except when the changeset is docs-only or infrastructure-only.
+- **Z (patch)** increments on every SHIP when `versioning.patchEveryShip` is enabled in `TCTBP.json`.
+- When the changeset is docs-only or infrastructure-only, whether that SHIP still receives a patch bump is controlled by `versioning.patchEveryShipForDocsInfrastructureOnly` in `TCTBP.json`.
 - **Y (minor)** increments on the first SHIP of a new work branch, resetting Z to 0, only when the branch prefix matches `minorBranchPrefixes`, default `feature/`.
   - Operational definition: first SHIP on a branch means no prior shipped tag exists on commits unique to the current branch since it diverged from the default branch.
   - Non-feature prefixes such as `fix/`, `docs/`, and `infrastructure/` receive a patch bump on their first SHIP.

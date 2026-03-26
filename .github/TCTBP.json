@@ -362,7 +362,7 @@
   "versioning": {
     "scheme": "semver",
     "patchEveryShip": true,
-    "skipForChangeTypes": ["docs-only", "infrastructure-only"],
+    "patchEveryShipForDocsInfrastructureOnly": true,
     "minorOnFirstShipOfBranch": true,
     "minorBranchPrefixes": ["feature/"],
     "majorExplicitOnly": true

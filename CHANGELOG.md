@@ -9,6 +9,7 @@ The format is based on Keep a Changelog.
 - Add a local-only `checkpoint` workflow for durable non-release slice saves without push, tag, version, or metadata side effects.
 - Align the canonical TCTBP policy, guidance, runtime trigger entry point, and onboarding docs with the new checkpoint trigger.
 - Add a structured checkpoint summary table that shows the pre-checkpoint and new checkpoint commits alongside the local-only post-checkpoint state.
+- Make docs/infrastructure-only patch bump behaviour explicitly configurable in `TCTBP.json` and set the canonical repo to ship a patch bump under all circumstances.
 
 ## [v0.2.2] - 2026-03-26
 

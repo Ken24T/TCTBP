@@ -51,7 +51,8 @@ Notes:
 - Starts with a four-column table: `Origin`, `Local`, `Status`, `Action(s)`
 - Table should explicitly include rows such as tag state and commits ahead/behind
 - Uses the normal build gate by default, not the release build
-- Patch bump happens on every ship unless the changes are docs-only or infrastructure-only
+- Patch bump behaviour is controlled by `versioning.patchEveryShip` and `versioning.patchEveryShipForDocsInfrastructureOnly` in `TCTBP.json`
+- In this canonical repo, docs-only and infrastructure-only ships still receive a patch bump
 - Release build is reserved for installation or deployment scenarios
 - Stops if the branch is dirty, behind origin, or diverged from origin
 - May publish a clean branch that has no upstream yet by creating the upstream on the first ship push
