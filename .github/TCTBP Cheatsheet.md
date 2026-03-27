@@ -3,6 +3,7 @@
 Short operator reference for the TCTBP template repository workflows.
 
 Use this file for the quick view.
+Use [TCTBP Cheat Card.md](TCTBP%20Cheat%20Card.md) for a much smaller printable desk reference.
 Use [TCTBP Agent.md](TCTBP%20Agent.md) for the full workflow rules and guard rails.
 
 ## Core Rule
