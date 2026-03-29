@@ -173,16 +173,18 @@ Never does:
 ### `resume` / `resume please`
 
 Purpose:
-Safely restore the intended work branch at the start of a session.
+Safely restore the intended work branch at the start of a session, preserving local unpublished work first when a safe branch switch would otherwise strand it.
 
 Attempts to:
 
 - fetch and inspect remote state
 - read the handover metadata branch first
 - prefer metadata over arbitrary branch-recency guesses
+- detect when switching would strand local unpublished work on the current branch
+- ask to preserve that local work locally before switching when that case is safe
 - create a local tracking branch from the intended remote branch when needed
-- fast-forward a clean branch when origin is ahead
-- stop on ambiguity, divergence, or any case that would require publication
+- fast-forward the selected clean branch when origin is ahead
+- stop on ambiguity, divergence, conflicts, or any case that would require publication
 
 Use when:
 
@@ -191,10 +193,11 @@ Use when:
 
 Notes:
 
+- May create a local-only checkpoint or rescue branch after confirmation to preserve local work before switching
 - Does not publish
 - Does not update metadata
 - Does not create a release
-- Stops if switching branches would be destructive or if local/remote state is ambiguous
+- Stops if preserve-local handling would be unsafe, if switching branches would still be destructive, or if local/remote state is ambiguous
 
 ### `deploy` / `deploy please`
 
@@ -347,6 +350,7 @@ Repo-specific docs commonly reviewed:
 - Need a durable local-only save without publishing: use `checkpoint`
 - Need to publish the current branch without release side effects: use `publish`
 - Need to stop on one machine and resume on another safely: use `handover`, then `resume` on the next machine
+- If `resume` hits local unpublished work on the current machine, it should offer a local preserve step before switching
 - Need the local runtime installed or refreshed: use `deploy`
 - Need a quick repo state check: use `status`
 - Need to recover from partial workflow state: use `abort`

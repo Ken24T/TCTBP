@@ -413,12 +413,13 @@ Approval rules:
 
 Preferred trigger: `resume` / `resume please`
 
-Purpose: restore the intended work branch at the start of a session by consulting the handover metadata branch first and reconciling only through safe checkout and fast-forward operations.
+Purpose: restore the intended work branch at the start of a session by consulting the handover metadata branch first, preserving current local unpublished work when a safe branch switch would otherwise strand it, and reconciling only through safe checkout and fast-forward operations.
 
 Trusted outcome:
 
 - If valid handover metadata exists, `resume` uses it as the primary signal for which branch to restore.
 - If no valid metadata exists, `resume` may infer the branch from safe repo state, but it must stop on ambiguity.
+- If switching to the handed-over branch would strand current local unpublished work, `resume` should detect that preserve-local case and offer a local preservation step before switching.
 - `resume` never publishes, force-pushes, rebases, or rewrites history.
 
 Behaviour, safe and deterministic:
@@ -427,7 +428,7 @@ Behaviour, safe and deterministic:
    - Report the current branch explicitly.
    - Confirm working tree state.
    - Stop immediately if `HEAD` is detached.
-   - If the current branch is dirty and switching branches might be needed, stop and ask the user to resolve the local state first.
+   - Stop if the current branch has unresolved conflicts or if a merge, rebase, cherry-pick, or revert is in progress.
 
 2. **Fetch and inspect remote state**
    - Fetch from `origin` with tags.
@@ -449,27 +450,40 @@ Behaviour, safe and deterministic:
    - If multiple plausible candidate work branches exist, stop and ask the user which branch to resume.
    - If no suitable target branch exists, remain on the current branch and report that no resume branch was detected.
 
-5. **Switch to the target branch when needed**
-   - If not already on the confirmed target branch and the tree is clean, check out the target branch and set up local tracking if required.
-   - If branch switching would be destructive, stop.
+5. **Classify preserve-local need before switching**
+   - If moving to the selected target branch would strand current local unpublished work on another branch, treat that as a preserve-local case rather than a generic stop.
+   - Dirty uncommitted work on the current branch qualifies when a branch switch is required.
+   - Local-only commits on the current branch may qualify when they are not already the selected handed-over branch and can be preserved without publication.
+   - Diverged current-branch history, conflicted state, or any case that would require publish, merge, or rebase does not qualify for preserve-local handling; stop and explain the blocker.
 
-6. **Reconcile read-only**
+6. **Preserve local work when needed**
+   - Ask for explicit confirmation before creating any local preserve step.
+   - When the current branch is dirty, create a local-only checkpoint commit using the repo's checkpoint rules.
+   - When the current branch is clean but ahead of upstream, create a clearly named local rescue branch or an equivalent local-only preservation step before switching.
+   - Make it explicit that this preserve-local step does not push, tag, update metadata, or publish anything.
+
+7. **Switch to the target branch when needed**
+   - If not already on the confirmed target branch and the tree is clean or has just been preserved locally, check out the target branch and set up local tracking if required.
+   - If branch switching would still be destructive after preserve-local handling, stop.
+
+8. **Reconcile read-only**
    - Determine whether the target branch is ahead, behind, up to date, or diverged from its tracked remote branch.
    - If the local branch is behind and clean, it may be fast-forwarded.
    - If the local branch is ahead, stop and report that `resume` does not publish.
    - If local and remote have diverged, stop and report the divergence for explicit resolution.
 
-7. **Verify ready state**
+9. **Verify ready state**
    - Confirm the working directory is on the intended branch.
    - Confirm the branch now matches `origin/<target-branch>` or explain the non-destructive blocker.
 
-8. **Summary**
-   - Confirm which branch was restored, whether a fast-forward or local tracking branch creation was needed, and whether any blocker remains.
+10. **Summary**
+   - Confirm which branch was restored, whether a preserve-local checkpoint or rescue branch was created first, whether a fast-forward or local tracking branch creation was needed, and whether any blocker remains.
    - Explicitly state that `resume` made no publication or release changes.
 
 Approval rules:
 
 - `resume` does not grant push approval because it must never publish as part of restore.
+- `resume` may create a local-only checkpoint commit or rescue branch only after explicit confirmation when preserving local work before a safe branch switch.
 
 ---
 

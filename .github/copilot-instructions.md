@@ -106,7 +106,7 @@ Supported triggers remain:
 - `branch`
 - `branch <new-branch-name>`
 
-For mutating workflows, keep detached-HEAD stop conditions, local checkpoint safety, branch-name validation, publication safety, branch-closeout merge confirmation, and handover metadata safety aligned across the JSON profile and Markdown guidance.
+For mutating workflows, keep detached-HEAD stop conditions, local checkpoint safety, resume preserve-local detection, branch-name validation, publication safety, branch-closeout merge confirmation, and handover metadata safety aligned across the JSON profile and Markdown guidance.
 If the custom agent or hook layer is changed, keep the runtime files aligned with the Markdown and JSON guidance that downstream repos will consume.
 
 ## Editing Guidance
