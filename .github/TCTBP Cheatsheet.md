@@ -279,7 +279,8 @@ Attempts to:
 
 - assess whether the current branch should be shipped first
 - stop if `HEAD` is detached
-- in next-branch mode, stop if the requested new branch name is invalid or already exists locally or remotely
+- in next-branch mode, stop if the requested new branch name is invalid or equals `main`
+- in next-branch mode, auto-rename the requested branch to `-1`, `-2`, and so on when the requested name already exists locally, already exists remotely, or would collide by case
 - stop instead of switching if the current branch is dirty and SHIP is declined
 - recommend `checkpoint`, then `publish` or `handover`, when the current branch is dirty and you need a non-release preservation step before retrying `branch`
 - stop instead of guessing if the source branch or local `main` is diverged
@@ -289,7 +290,7 @@ Attempts to:
 - merge the current branch into local `main` when the current branch is not already `main`
 - skip the merge step when you already start on `main`
 - in bare `branch` mode, stop on updated local `main`
-- in `branch <new-branch-name>` mode, create and switch to the new branch from updated local `main`
+- in `branch <new-branch-name>` mode, create and switch to the resolved branch name from updated local `main`
 
 Safety expectation:
 

@@ -9,6 +9,7 @@ The format is based on Keep a Changelog.
 - Add a portable `node ./scripts/validate-template-repo.js` validator for the canonical repository while keeping `scripts/validate-template-repo.sh` as a Linux/macOS wrapper with `nodejs` fallback.
 - Add `scripts/validate-template-repo.ps1` as a native Windows PowerShell wrapper around the same validator.
 - Expand template-repository validation coverage to include the runtime agent, hook files, frontmatter structure, and command alignment.
+- Allow the `branch <new-branch-name>` workflow to auto-resolve existing branch names by appending numeric suffixes such as `-1` and `-2` instead of stopping immediately.
 - Fix the consolidated reconcile prompt frontmatter and make its example paths platform-neutral for Windows and POSIX environments.
 - Add Windows and Linux CI validation for the canonical repository.
 

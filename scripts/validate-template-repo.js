@@ -49,6 +49,7 @@ validateHookConfig();
 validateTriggerCoverage();
 validateWorkflowSections();
 validateShipOrder();
+validateBranchAutoRenamePolicy();
 validateShellWrapper();
 validatePowerShellWrapper();
 validateWorkflow();
@@ -94,6 +95,44 @@ function validateProfile(profileData) {
 
   if (!profileData.governance || profileData.governance.templateMode !== false) {
     errors.push("TCTBP.json must be in live profile mode for this repository.");
+  }
+}
+
+function validateBranchAutoRenamePolicy() {
+  const branchCommand = profile && profile.activation ? profile.activation.branchCommand || {} : {};
+  const branch = profile && profile.branch ? profile.branch : {};
+  const guidance = readText(".github/TCTBP Agent.md");
+  const cheatsheet = readText(".github/TCTBP Cheatsheet.md");
+
+  const checks = [
+    [branchCommand.autoRenameTargetWhenExists === true, "TCTBP.json activation.branchCommand.autoRenameTargetWhenExists must be true in the canonical repo."],
+    [branch.autoRenameTargetWhenExists === true, "TCTBP.json branch.autoRenameTargetWhenExists must be true in the canonical repo."],
+    [branchCommand.stopIfTargetBranchExistsLocal === false, "TCTBP.json activation.branchCommand.stopIfTargetBranchExistsLocal must be false when auto-rename is enabled."],
+    [branchCommand.stopIfTargetBranchExistsRemote === false, "TCTBP.json activation.branchCommand.stopIfTargetBranchExistsRemote must be false when auto-rename is enabled."],
+    [branch.stopIfTargetBranchExistsLocal === false, "TCTBP.json branch.stopIfTargetBranchExistsLocal must be false when auto-rename is enabled."],
+    [branch.stopIfTargetBranchExistsRemote === false, "TCTBP.json branch.stopIfTargetBranchExistsRemote must be false when auto-rename is enabled."],
+    [branchCommand.autoRenameSuffixSeparator === "-", "TCTBP.json activation.branchCommand.autoRenameSuffixSeparator must remain '-'."],
+    [branch.autoRenameSuffixSeparator === "-", "TCTBP.json branch.autoRenameSuffixSeparator must remain '-'."],
+    [branchCommand.autoRenameStartAt === 1, "TCTBP.json activation.branchCommand.autoRenameStartAt must remain 1."],
+    [branch.autoRenameStartAt === 1, "TCTBP.json branch.autoRenameStartAt must remain 1."]
+  ];
+
+  for (const [condition, message] of checks) {
+    if (!condition) {
+      errors.push(message);
+    }
+  }
+
+  if (!guidance.includes("appending `-1`, then `-2`")) {
+    errors.push(".github/TCTBP Agent.md must document the numeric branch auto-rename suffix behaviour.");
+  }
+
+  if (!guidance.includes("requested branch name and the resolved branch name")) {
+    errors.push(".github/TCTBP Agent.md must report requested and resolved branch names when auto-renaming occurs.");
+  }
+
+  if (!cheatsheet.includes("auto-rename the requested branch to `-1`, `-2`")) {
+    errors.push(".github/TCTBP Cheatsheet.md must document the branch auto-rename suffix behaviour.");
   }
 }
 
