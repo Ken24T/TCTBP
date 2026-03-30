@@ -80,6 +80,7 @@ Changes in this repository should improve one or more of:
 - clarity of the TCTBP workflow
 - safety guarantees and explicit stop conditions
 - portability across languages and project types
+- portability of the canonical repository validation path across Windows and Linux
 - ease of adoption in a new repository
 - consistency between the JSON profile and the Markdown guidance
 

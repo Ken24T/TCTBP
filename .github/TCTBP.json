@@ -17,9 +17,9 @@
   "profile": {
     "commands": {
       "format": null,
-      "test": "bash ./scripts/validate-template-repo.sh",
-      "lint": "bash ./scripts/validate-template-repo.sh",
-      "build": "bash ./scripts/validate-template-repo.sh",
+      "test": "node ./scripts/validate-template-repo.js",
+      "lint": "node ./scripts/validate-template-repo.js",
+      "build": "node ./scripts/validate-template-repo.js",
       "releaseBuild": null
     },
     "qualityGates": {
@@ -342,7 +342,7 @@
       },
       {
         "changeType": "packaging-or-metadata",
-        "review": ["README.md", "VERSION", "CHANGELOG.md", "scripts/validate-template-repo.sh"]
+        "review": ["README.md", "VERSION", "CHANGELOG.md", "scripts/validate-template-repo.js", "scripts/validate-template-repo.ps1", "scripts/validate-template-repo.sh", ".github/workflows/validate-template-repo.yml"]
       },
       {
         "changeType": "roadmap-or-status",

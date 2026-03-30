@@ -17,9 +17,9 @@ Use [TCTBP Agent.md](TCTBP%20Agent.md) for the full workflow rules and guard rai
 Repo gates for this repository:
 
 - Format check: `n/a`
-- Test: `bash ./scripts/validate-template-repo.sh`
-- Lint: `bash ./scripts/validate-template-repo.sh`
-- Normal build gate: `bash ./scripts/validate-template-repo.sh`
+- Test: `node ./scripts/validate-template-repo.js`
+- Lint: `node ./scripts/validate-template-repo.js`
+- Normal build gate: `node ./scripts/validate-template-repo.js`
 - Runtime or deployment build: `n/a`
 
 ## Triggers
@@ -330,7 +330,9 @@ Repo-specific docs commonly reviewed:
 
 ## Deployment Notes
 
-- `bash ./scripts/validate-template-repo.sh` is the normal verification command
+- `node ./scripts/validate-template-repo.js` is the normal verification command on both Windows and Linux
+- `./scripts/validate-template-repo.ps1` is available as a native PowerShell wrapper on Windows
+- `./scripts/validate-template-repo.sh` remains available as a Linux/macOS shell wrapper and keeps `nodejs` fallback support
 - There is no release-build command at present
 - Deployment should validate the installed result, not just copy files
 - Use the repo-defined install or publish command instead of ad hoc copy commands

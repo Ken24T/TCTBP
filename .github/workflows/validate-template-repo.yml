@@ -1,0 +1,32 @@
+name: Validate Template Repository
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-latest
+          - windows-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Validate template repository
+        run: node ./scripts/validate-template-repo.js
+
+      - name: Validate PowerShell wrapper
+        if: runner.os == 'Windows'
+        shell: pwsh
+        run: ./scripts/validate-template-repo.ps1
