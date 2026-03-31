@@ -1,7 +1,7 @@
 {
   "branch": "chore/cross-platform-validation-hardening",
-  "commit": "84198f31f5227218c6b6142aff566d1b568fc4bb",
-  "updatedAt": "2026-03-31T00:03:32Z",
-  "version": "0.2.3",
-  "tag": "v0.2.3"
+  "commit": "2c95a97d98f07d4e443a080254ac65bc3294d442",
+  "updatedAt": "2026-03-31T20:55:18Z",
+  "version": "0.2.4",
+  "tag": "v0.2.4"
 }
