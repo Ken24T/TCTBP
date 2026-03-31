@@ -123,7 +123,9 @@ Behaviour, local-first and no-code-loss:
    - Stop immediately if `HEAD` is detached; branch closeout must operate on a named branch.
    - Determine whether the request is closeout-only mode (`branch`) or next-branch mode (`branch <new-branch-name>`).
    - In next-branch mode, validate the requested branch name before doing any other workflow step.
-   - In next-branch mode, stop if the requested branch name is invalid, equals the default branch, already exists locally, already exists on origin, or would collide by case on a case-insensitive filesystem.
+   - In next-branch mode, stop if the requested branch name is invalid or equals the default branch.
+   - If the requested next-branch name already exists locally, already exists on origin, or would collide by case on a case-insensitive filesystem, derive a new candidate by appending `-1`, then `-2`, and so on until the candidate is unique across the configured local, remote, and case-collision checks.
+   - Report both the requested branch name and the resolved branch name before continuing whenever auto-renaming was required.
    - Determine whether the current branch is the default branch or a non-default work branch.
 
 2. **Assess whether SHIP is needed on the current branch**
@@ -169,7 +171,7 @@ Behaviour, local-first and no-code-loss:
 
 10. **Create and switch to the new branch when requested** from the updated default branch.
    - In closeout-only mode, stop here and leave the repository on the updated default branch.
-   - In next-branch mode, create and switch to the requested new branch from the updated default branch.
+   - In next-branch mode, create and switch to the resolved new branch name from the updated default branch.
    - Stop if the new branch cannot be created or checked out safely.
 
 11. **Cleanup, optional and last**
@@ -179,7 +181,7 @@ Behaviour, local-first and no-code-loss:
    Any push requires explicit approval. Any branch deletion requires explicit approval.
 
 13. **Summary**
-   Confirm the source branch, whether merge into the default branch was confirmed, the resulting default-branch state, whether the workflow ran in closeout-only mode or next-branch mode, the new branch name when one was requested, and whether any push or deletion occurred. Explicitly state whether the workflow stopped for safety, stopped because merge into the default branch was declined, skipped the merge because the workflow started on the default branch, completed closeout-only mode without code loss, or completed the full transition without code loss. If the workflow stopped because the source branch was not yet published, say so explicitly and recommend the exact sync step needed before retrying.
+   Confirm the source branch, whether merge into the default branch was confirmed, the resulting default-branch state, whether the workflow ran in closeout-only mode or next-branch mode, the requested branch name and resolved branch name when auto-renaming occurred, the new branch name finally created, and whether any push or deletion occurred. Explicitly state whether the workflow stopped for safety, stopped because merge into the default branch was declined, skipped the merge because the workflow started on the default branch, completed closeout-only mode without code loss, or completed the full transition without code loss. If the workflow stopped because the source branch was not yet published, say so explicitly and recommend the exact sync step needed before retrying.
 
 Versioning interaction:
 

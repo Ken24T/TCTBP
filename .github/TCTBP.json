@@ -17,9 +17,9 @@
   "profile": {
     "commands": {
       "format": null,
-      "test": "bash ./scripts/validate-template-repo.sh",
-      "lint": "bash ./scripts/validate-template-repo.sh",
-      "build": "bash ./scripts/validate-template-repo.sh",
+      "test": "node ./scripts/validate-template-repo.js",
+      "lint": "node ./scripts/validate-template-repo.js",
+      "build": "node ./scripts/validate-template-repo.js",
       "releaseBuild": null
     },
     "qualityGates": {
@@ -58,10 +58,15 @@
       "enabled": true,
       "pattern": "^branch(?:\\s+(.+))?$",
       "allowCloseoutWithoutNewBranch": true,
-      "stopIfTargetBranchExistsLocal": true,
-      "stopIfTargetBranchExistsRemote": true,
+      "stopIfTargetBranchExistsLocal": false,
+      "stopIfTargetBranchExistsRemote": false,
       "stopIfTargetBranchEqualsDefault": true,
-      "stopIfTargetBranchInvalid": true
+      "stopIfTargetBranchInvalid": true,
+      "autoRenameTargetWhenExists": true,
+      "autoRenameSuffixSeparator": "-",
+      "autoRenameStartAt": 1,
+      "checkResolvedTargetAgainstRemote": true,
+      "checkResolvedTargetForCaseCollision": true
     }
   },
   "ship": {
@@ -194,10 +199,16 @@
     "allowCloseoutWithoutNewBranch": true,
     "stopIfDetachedHead": true,
     "validateTargetBranchNameBeforeWorkflow": true,
-    "stopIfTargetBranchExistsLocal": true,
-    "stopIfTargetBranchExistsRemote": true,
+    "stopIfTargetBranchExistsLocal": false,
+    "stopIfTargetBranchExistsRemote": false,
     "stopIfTargetBranchEqualsDefault": true,
     "stopIfTargetBranchInvalid": true,
+    "autoRenameTargetWhenExists": true,
+    "autoRenameSuffixSeparator": "-",
+    "autoRenameStartAt": 1,
+    "checkResolvedTargetAgainstRemote": true,
+    "checkResolvedTargetForCaseCollision": true,
+    "reportResolvedTargetNameBeforeCreation": true,
     "requiresCleanTreeBeforeSwitch": true,
     "stopIfDirtyAndShipDeclined": true,
     "stopIfSourceBranchAheadOfUpstream": true,
@@ -342,7 +353,7 @@
       },
       {
         "changeType": "packaging-or-metadata",
-        "review": ["README.md", "VERSION", "CHANGELOG.md", "scripts/validate-template-repo.sh"]
+        "review": ["README.md", "VERSION", "CHANGELOG.md", "scripts/validate-template-repo.js", "scripts/validate-template-repo.ps1", "scripts/validate-template-repo.sh", ".github/workflows/validate-template-repo.yml"]
       },
       {
         "changeType": "roadmap-or-status",

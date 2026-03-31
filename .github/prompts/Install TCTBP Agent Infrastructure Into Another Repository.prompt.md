@@ -1,3 +1,4 @@
+---
 description: "Use when the user explicitly asks for reconcile-tctbp <absolute-target-repo-path> so the canonical TCTBP repository can inspect another repository, detect whether it is new, missing the agent runtime, or already using the agent runtime, and then reconcile that repository's TCTBP state safely."
 name: "reconcile-tctbp"
 argument-hint: "Absolute target repository path, plus optional canonical ref, target state or AUTO, backup mode, and whether to include the hook layer"
@@ -31,6 +32,8 @@ The target repository is the source of repo-specific commands, paths, deployment
 ## Required Inputs
 
 Fill in these values before using the prompt.
+
+Absolute paths may use Windows or POSIX syntax. Preserve the target repository's existing path style instead of rewriting it.
 
 ```text
 Canonical TCTBP repository path: <ABSOLUTE_CANONICAL_TCTBP_REPO_PATH_OR_CURRENT_REPO>
@@ -238,10 +241,10 @@ When finished, report:
 ## Example Invocation
 
 ```text
-reconcile-tctbp /absolute/path/to/target-repo
+reconcile-tctbp <ABSOLUTE_TARGET_REPO_PATH>
 
-Canonical TCTBP repository path: /home/ken/Documents/development/repos/TCTBP
-Target repository path: /absolute/path/to/target-repo
+Canonical TCTBP repository path: <ABSOLUTE_CANONICAL_TCTBP_REPO_PATH_OR_CURRENT_REPO>
+Target repository path: <ABSOLUTE_TARGET_REPO_PATH>
 Target repository state: AUTO
 Preferred install/update branch in target repo: chore/apply-tctbp
 Include hook layer: YES

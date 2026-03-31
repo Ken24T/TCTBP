@@ -31,6 +31,20 @@ Use these together.
 - `.github/copilot-instructions.md` explains how the templates should be customised and maintained.
 - `.github/hooks/tctbp-safety.json` and `scripts/tctbp-pretool-hook.js` provide the optional runtime approval hook for risky git commands.
 
+## Repository Validation
+
+This canonical repository validates itself with the portable command `node ./scripts/validate-template-repo.js`.
+
+Recommended command paths:
+
+- Cross-platform preferred: `node ./scripts/validate-template-repo.js`
+- Windows PowerShell wrapper: `./scripts/validate-template-repo.ps1`
+- Linux or macOS shell wrapper: `./scripts/validate-template-repo.sh`
+
+The PowerShell and shell wrappers both delegate to the same validator so the checks stay identical across environments.
+
+The Linux or macOS shell wrapper preserves `nodejs` fallback support where `node` is not the installed executable name.
+
 ## Recommended Use In A New Repository
 
 For a brand new project, the simplest workflow is:
@@ -136,10 +150,10 @@ When TCTBP is applied successfully, the target repository should receive or reta
 From the canonical TCTBP repository, start with a prompt like this:
 
 ```text
-reconcile-tctbp /absolute/path/to/target-repo
+reconcile-tctbp <ABSOLUTE_TARGET_REPO_PATH>
 
-Canonical TCTBP repository path: /home/ken/Documents/development/repos/TCTBP
-Target repository path: /absolute/path/to/target-repo
+Canonical TCTBP repository path: <ABSOLUTE_CANONICAL_TCTBP_REPO_PATH_OR_CURRENT_REPO>
+Target repository path: <ABSOLUTE_TARGET_REPO_PATH>
 Target repository state: AUTO
 Preferred install/update branch in target repo: chore/apply-tctbp
 Include hook layer: YES
@@ -150,6 +164,8 @@ Any intentional local workflow deviations that must not be normalised away: none
 ```
 
 That prompt gives Copilot a single entry point while still keeping the internal safety paths distinct for installation, adaptation, and refresh.
+
+Absolute repository paths may use Windows or POSIX syntax. Preserve whichever path style the operator provided.
 
 ## Practical Recommendation
 

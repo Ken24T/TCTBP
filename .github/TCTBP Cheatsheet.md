@@ -17,9 +17,9 @@ Use [TCTBP Agent.md](TCTBP%20Agent.md) for the full workflow rules and guard rai
 Repo gates for this repository:
 
 - Format check: `n/a`
-- Test: `bash ./scripts/validate-template-repo.sh`
-- Lint: `bash ./scripts/validate-template-repo.sh`
-- Normal build gate: `bash ./scripts/validate-template-repo.sh`
+- Test: `node ./scripts/validate-template-repo.js`
+- Lint: `node ./scripts/validate-template-repo.js`
+- Normal build gate: `node ./scripts/validate-template-repo.js`
 - Runtime or deployment build: `n/a`
 
 ## Triggers
@@ -279,7 +279,8 @@ Attempts to:
 
 - assess whether the current branch should be shipped first
 - stop if `HEAD` is detached
-- in next-branch mode, stop if the requested new branch name is invalid or already exists locally or remotely
+- in next-branch mode, stop if the requested new branch name is invalid or equals `main`
+- in next-branch mode, auto-rename the requested branch to `-1`, `-2`, and so on when the requested name already exists locally, already exists remotely, or would collide by case
 - stop instead of switching if the current branch is dirty and SHIP is declined
 - recommend `checkpoint`, then `publish` or `handover`, when the current branch is dirty and you need a non-release preservation step before retrying `branch`
 - stop instead of guessing if the source branch or local `main` is diverged
@@ -289,7 +290,7 @@ Attempts to:
 - merge the current branch into local `main` when the current branch is not already `main`
 - skip the merge step when you already start on `main`
 - in bare `branch` mode, stop on updated local `main`
-- in `branch <new-branch-name>` mode, create and switch to the new branch from updated local `main`
+- in `branch <new-branch-name>` mode, create and switch to the resolved branch name from updated local `main`
 
 Safety expectation:
 
@@ -330,7 +331,9 @@ Repo-specific docs commonly reviewed:
 
 ## Deployment Notes
 
-- `bash ./scripts/validate-template-repo.sh` is the normal verification command
+- `node ./scripts/validate-template-repo.js` is the normal verification command on both Windows and Linux
+- `./scripts/validate-template-repo.ps1` is available as a native PowerShell wrapper on Windows
+- `./scripts/validate-template-repo.sh` remains available as a Linux/macOS shell wrapper and keeps `nodejs` fallback support
 - There is no release-build command at present
 - Deployment should validate the installed result, not just copy files
 - Use the repo-defined install or publish command instead of ad hoc copy commands

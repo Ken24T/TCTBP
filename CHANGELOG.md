@@ -6,6 +6,15 @@ The format is based on Keep a Changelog.
 
 ## [Unreleased]
 
+## [v0.2.4] - 2026-03-31
+
+- Add a portable `node ./scripts/validate-template-repo.js` validator for the canonical repository while keeping `scripts/validate-template-repo.sh` as a Linux/macOS wrapper with `nodejs` fallback.
+- Add `scripts/validate-template-repo.ps1` as a native Windows PowerShell wrapper around the same validator.
+- Expand template-repository validation coverage to include the runtime agent, hook files, frontmatter structure, and command alignment.
+- Allow the `branch <new-branch-name>` workflow to auto-resolve existing branch names by appending numeric suffixes such as `-1` and `-2` instead of stopping immediately.
+- Fix the consolidated reconcile prompt frontmatter and make its example paths platform-neutral for Windows and POSIX environments.
+- Add Windows and Linux CI validation for the canonical repository.
+
 ## [v0.2.3] - 2026-03-27
 
 - Add a local-only `checkpoint` workflow for durable non-release slice saves without push, tag, version, or metadata side effects.
@@ -35,7 +44,8 @@ The format is based on Keep a Changelog.
 - Establish live TCTBP project profile for the template repository.
 - Add validation script, version file, and onboarding documentation.
 
-[Unreleased]: https://github.com/Ken24T/TCTBP/compare/v0.2.3...HEAD
+[Unreleased]: https://github.com/Ken24T/TCTBP/compare/v0.2.4...HEAD
+[v0.2.4]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.4
 [v0.2.3]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.3
 [v0.2.2]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.2
 [v0.2.1]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.1
