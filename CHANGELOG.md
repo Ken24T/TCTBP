@@ -6,6 +6,8 @@ The format is based on Keep a Changelog.
 
 ## [Unreleased]
 
+## [v0.2.4] - 2026-03-31
+
 - Add a portable `node ./scripts/validate-template-repo.js` validator for the canonical repository while keeping `scripts/validate-template-repo.sh` as a Linux/macOS wrapper with `nodejs` fallback.
 - Add `scripts/validate-template-repo.ps1` as a native Windows PowerShell wrapper around the same validator.
 - Expand template-repository validation coverage to include the runtime agent, hook files, frontmatter structure, and command alignment.
@@ -42,7 +44,8 @@ The format is based on Keep a Changelog.
 - Establish live TCTBP project profile for the template repository.
 - Add validation script, version file, and onboarding documentation.
 
-[Unreleased]: https://github.com/Ken24T/TCTBP/compare/v0.2.3...HEAD
+[Unreleased]: https://github.com/Ken24T/TCTBP/compare/v0.2.4...HEAD
+[v0.2.4]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.4
 [v0.2.3]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.3
 [v0.2.2]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.2
 [v0.2.1]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.1
