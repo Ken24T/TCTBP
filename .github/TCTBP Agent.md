@@ -170,17 +170,19 @@ Behaviour, local-first and no-code-loss:
    - If that cannot be confirmed, stop.
 
 10. **Create and switch to the new branch when requested** from the updated default branch.
-   - In closeout-only mode, stop here and leave the repository on the updated default branch.
-   - In next-branch mode, create and switch to the resolved new branch name from the updated default branch.
-   - Stop if the new branch cannot be created or checked out safely.
 
-11. **Cleanup, optional and last**
+   In closeout-only mode, stop here and leave the repository on the updated default branch. In next-branch mode, create and switch to the resolved new branch name from the updated default branch. Stop if the new branch cannot be created or checked out safely.
+
+1. **Cleanup, optional and last**
+
    Consider deleting the old branch only after the merge succeeded and the source branch tip is reachable from the default branch. In next-branch mode, also require that the new branch exists and is checked out. Ask the user whether to delete the old branch locally and remotely. Do not assume the old branch was a feature branch; apply the same rule to `fix/`, `docs/`, `infrastructure/`, or other work branches.
 
-12. **Remote safety**
+1. **Remote safety**
+
    Any push requires explicit approval. Any branch deletion requires explicit approval.
 
-13. **Summary**
+1. **Summary**
+
    Confirm the source branch, whether merge into the default branch was confirmed, the resulting default-branch state, whether the workflow ran in closeout-only mode or next-branch mode, the requested branch name and resolved branch name when auto-renaming occurred, the new branch name finally created, and whether any push or deletion occurred. Explicitly state whether the workflow stopped for safety, stopped because merge into the default branch was declined, skipped the merge because the workflow started on the default branch, completed closeout-only mode without code loss, or completed the full transition without code loss. If the workflow stopped because the source branch was not yet published, say so explicitly and recommend the exact sync step needed before retrying.
 
 Versioning interaction:
@@ -279,13 +281,13 @@ Behaviour, safe and local-only:
 
 Recommended CHECKPOINT summary rows:
 
-| Row                 | Origin                               | Local                              | Status                                     | Action(s)                     |
-| ------------------- | ------------------------------------ | ---------------------------------- | ------------------------------------------ | ----------------------------- |
-| Previous HEAD       | `n/a`                                | pre-checkpoint HEAD SHA and subject | recorded baseline                           | none                          |
-| Checkpoint commit   | `n/a`                                | new checkpoint SHA and subject      | created                                     | none                          |
-| Working tree result | `n/a`                                | clean or residual blocker           | clean, blocked, or needs-inspection         | none or inspect               |
-| Upstream sync state | `origin/<current-branch>` or `n/a`   | local ahead/behind counts           | synced, ahead, unpublished, or diverged     | none, publish, handover, stop |
-| Remote side effects | remote branch/tag/metadata unchanged | local checkpoint only               | unchanged                                   | none                          |
+| Row | Origin | Local | Status | Action(s) |
+| --- | --- | --- | --- | --- |
+| Previous HEAD | `n/a` | pre-checkpoint HEAD SHA and subject | recorded baseline | none |
+| Checkpoint commit | `n/a` | new checkpoint SHA and subject | created | none |
+| Working tree result | `n/a` | clean or residual blocker | clean, blocked, or needs-inspection | none or inspect |
+| Upstream sync state | `origin/<current-branch>` or `n/a` | local ahead/behind counts | synced, ahead, unpublished, or diverged | none, publish, handover, stop |
+| Remote side effects | remote branch/tag/metadata unchanged | local checkpoint only | unchanged | none |
 
 Checkpoint table rules:
 
@@ -479,8 +481,8 @@ Behaviour, safe and deterministic:
    - Confirm the branch now matches `origin/<target-branch>` or explain the non-destructive blocker.
 
 10. **Summary**
-   - Confirm which branch was restored, whether a preserve-local checkpoint or rescue branch was created first, whether a fast-forward or local tracking branch creation was needed, and whether any blocker remains.
-   - Explicitly state that `resume` made no publication or release changes.
+
+   Confirm which branch was restored, whether a preserve-local checkpoint or rescue branch was created first, whether a fast-forward or local tracking branch creation was needed, and whether any blocker remains. Explicitly state that `resume` made no publication or release changes.
 
 Approval rules:
 
