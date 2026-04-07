@@ -6,6 +6,10 @@ The format is based on Keep a Changelog.
 
 ## [Unreleased]
 
+## [v0.2.5] - 2026-04-07
+
+- Fix markdown lint issues in the TCTBP Agent guidance.
+
 ## [v0.2.4] - 2026-03-31
 
 - Add a portable `node ./scripts/validate-template-repo.js` validator for the canonical repository while keeping `scripts/validate-template-repo.sh` as a Linux/macOS wrapper with `nodejs` fallback.
@@ -44,7 +48,8 @@ The format is based on Keep a Changelog.
 - Establish live TCTBP project profile for the template repository.
 - Add validation script, version file, and onboarding documentation.
 
-[Unreleased]: https://github.com/Ken24T/TCTBP/compare/v0.2.4...HEAD
+[Unreleased]: https://github.com/Ken24T/TCTBP/compare/v0.2.5...HEAD
+[v0.2.5]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.5
 [v0.2.4]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.4
 [v0.2.3]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.3
 [v0.2.2]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.2
