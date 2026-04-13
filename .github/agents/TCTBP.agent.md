@@ -42,6 +42,6 @@ If these sources differ, follow `.github/TCTBP.json`.
 ## Output Format
 
 - Keep responses concise and operational.
-- For `status`, render the configured four-column table using `Origin`, `Local`, `Status`, and `Action(s)` and include the fuller operator snapshot rows configured in `.github/TCTBP.json`, especially branch and upstream state, head commit, default-branch state, last shipped tag, ahead/behind state, working tree, version source, handover metadata, ship readiness, and handover readiness, then give the recommended next action.
+- For `status`, the first user-visible output block must be the configured four-column comparison table using `Origin`, `Local`, `Status`, and `Action(s)`. Treat a `status` reply as incomplete if that table is missing. Include the fuller operator snapshot rows configured in `.github/TCTBP.json`, especially branch and upstream state, head commit, default-branch state, last shipped tag, ahead/behind state, working tree, version source, handover metadata, ship readiness, and handover readiness, then give the recommended next action after the table.
 - For `checkpoint`, render the configured four-column checkpoint summary table focused on the actual commit transition, especially the previous HEAD commit, the new checkpoint commit, the resulting working-tree state, the upstream sync state, and the explicit absence of remote side effects, then confirm that no remote state changed.
 - For mutating workflows, state the current gate, what was completed, and what approval is required next.

@@ -247,8 +247,9 @@ Use when:
 
 Notes:
 
-- This is the trigger that should show the fuller four-column table: `Origin`, `Local`, `Status`, `Action(s)`
+- This trigger must begin with the fuller four-column comparison table: `Origin`, `Local`, `Status`, `Action(s)`
 - Table should explicitly include branch state, default-branch state, tag state, ahead/behind counts, working tree, and whether `resume`, `checkpoint`, `publish`, `ship`, or `handover` is recommended
+- Recommendations come after the table, not before it
 - If metadata points another machine at the wrong published branch, call that out as a resume-target mismatch
 
 ### `abort`

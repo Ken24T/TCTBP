@@ -162,7 +162,7 @@
       "ship-readiness",
       "handover-readiness"
     ],
-    "comment": "For status, render the fuller local-versus-origin operator snapshot. Include the current branch, default branch, tags, ahead/behind state, and handover relevance. Use 'n/a' where no meaningful origin-side value exists."
+    "comment": "For status, the first user-visible output block must be the fuller local-versus-origin comparison table using exactly the configured columns `Origin`, `Local`, `Status`, and `Action(s)`. Do not replace the table with prose, and do not emit a status-only reply without the table. Include the current branch, default branch, tags, ahead/behind state, and handover relevance. Use 'n/a' where no meaningful origin-side value exists."
   },
   "handoverReport": {
     "enabled": true,

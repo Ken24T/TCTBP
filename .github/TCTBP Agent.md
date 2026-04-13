@@ -503,10 +503,11 @@ Behaviour:
    - Run `git fetch --all --prune --tags`.
 
 2. **Report**
-   - Render a concise four-column snapshot table.
+   - The first user-visible output block must be a concise four-column snapshot table.
    - Use the columns `Origin`, `Local`, `Status`, and `Action(s)`.
    - Include the current branch, default branch, working tree, version, tag state, ahead/behind state, and whether `resume`, `publish`, `ship`, or `handover` is recommended.
    - If handover metadata points at a different published branch than the current clean branch, call that out explicitly as a resume-target mismatch, not merely generic metadata staleness.
+   - Do not replace the table with prose-only status text, and do not emit recommendations before the table.
 
 Required STATUS snapshot columns:
 
@@ -531,7 +532,7 @@ Recommended STATUS snapshot rows:
 | Handover readiness   | remote sync context                   | local sync context                  | ready, not-needed, blocked, or drifted        | handover, none, or resolve blocker     |
 
 1. **Recommend next steps**
-   - Provide 1 to 3 actionable recommendations with a one-line reason for each.
+   - Provide 1 to 3 actionable recommendations with a one-line reason for each after the table.
    - Use this priority order when multiple are valid: `abort`, `resume`, `handover`, `checkpoint`, `publish`, `ship`, `none`.
    - Never execute recommended actions automatically from `status`.
 
