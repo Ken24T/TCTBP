@@ -274,6 +274,7 @@ Behaviour, safe and local-only:
 
 5. **Summary**
    - Render a concise four-column summary table using `Origin`, `Local`, `Status`, and `Action(s)`.
+   - Emit the table as a standalone Markdown block with a blank line before and after it.
    - Keep the table focused on the actual commit transition and the resulting local-only baseline.
    - Confirm the checkpoint commit SHA and message.
    - Explicitly state that no push, tag, version bump, metadata update, or branch switch occurred.
@@ -379,7 +380,7 @@ Behaviour, safe and deterministic:
    Confirm the local current branch matches `origin/<current-branch>`. Confirm the metadata branch reflects the same branch and handed-over commit. Confirm the working directory is still on the intended current branch. If sync cannot be verified, stop and report the discrepancy.
 
 12. **Summary**
-   Render a concise four-column summary table using `Origin`, `Local`, `Status`, and `Action(s)`. Keep the table shorter than `status` and focused on the handover outcome. After the table, add a one-line completion summary that confirms the current branch, handed-over commit, version when relevant, and latest tag when relevant. Explicitly note that handover covered the current work branch, the handover metadata branch, and relevant tags only, not every branch in the repository.
+   Render a concise four-column summary table using `Origin`, `Local`, `Status`, and `Action(s)`. Emit the table as a standalone Markdown block with a blank line before and after it. Keep the table shorter than `status` and focused on the handover outcome. After the table, add a one-line completion summary that confirms the current branch, handed-over commit, version when relevant, and latest tag when relevant. Explicitly note that handover covered the current work branch, the handover metadata branch, and relevant tags only, not every branch in the repository.
 
 Required HANDOVER summary columns:
 
@@ -504,6 +505,7 @@ Behaviour:
 
 2. **Report**
    - The first user-visible output block must be a concise four-column snapshot table.
+   - Emit the table as a standalone Markdown block with a blank line before and after it.
    - Use the columns `Origin`, `Local`, `Status`, and `Action(s)`.
    - Include the current branch, default branch, working tree, version, tag state, ahead/behind state, and whether `resume`, `publish`, `ship`, or `handover` is recommended.
    - If handover metadata points at a different published branch than the current clean branch, call that out explicitly as a resume-target mismatch, not merely generic metadata staleness.
