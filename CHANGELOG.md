@@ -6,6 +6,11 @@ The format is based on Keep a Changelog.
 
 ## [Unreleased]
 
+## [v0.2.6] - 2026-04-13
+
+- Clarify that `status`, `checkpoint`, and `handover` responses must emit their summary tables as standalone Markdown blocks.
+- Tighten the canonical status and handover output rules so recommendations come after the table and handover includes an explicit summary-line requirement.
+
 ## [v0.2.5] - 2026-04-07
 
 - Fix markdown lint issues in the TCTBP Agent guidance.
@@ -48,7 +53,8 @@ The format is based on Keep a Changelog.
 - Establish live TCTBP project profile for the template repository.
 - Add validation script, version file, and onboarding documentation.
 
-[Unreleased]: https://github.com/Ken24T/TCTBP/compare/v0.2.5...HEAD
+[Unreleased]: https://github.com/Ken24T/TCTBP/compare/v0.2.6...HEAD
+[v0.2.6]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.6
 [v0.2.5]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.5
 [v0.2.4]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.4
 [v0.2.3]: https://github.com/Ken24T/TCTBP/releases/tag/v0.2.3
