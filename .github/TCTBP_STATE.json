@@ -1,7 +1,7 @@
 {
-  "branch": "main",
-  "commit": "7679f2c28971bd007144a50dd5b6c42080311624",
-  "updatedAt": "2026-04-13T03:46:23Z",
-  "version": "0.2.6",
-  "tag": "v0.2.6"
+  "branch": "docs/mermaid-trigger-flows",
+  "commit": "b74b6e4c3fd0844e6728fc0c74baee3c1ca18285",
+  "updatedAt": "2026-04-14T04:28:43Z",
+  "version": "0.2.5",
+  "tag": "v0.2.5"
 }
