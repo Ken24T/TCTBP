@@ -1,8 +1,8 @@
 ```mermaid
 flowchart TD
-    A["Trigger: status / status please"] --> B["Fetch remote state\ngit fetch --all --prune --tags"]
-    B --> C["Collect operator snapshot\nbranch and upstream\nhead commit\ndefault branch state\nlast shipped tag\ncommits ahead/behind\nworking tree\nversion source\nhandover metadata\nship readiness\nhandover readiness"]
-    C --> D["Render STATUS table\nColumns: Origin | Local | Status | Action(s)"]
+    A["Trigger: status / status please"] --> B["Fetch remote state<br/>git fetch --all --prune --tags"]
+    B --> C["Collect operator snapshot<br/>branch and upstream<br/>head commit<br/>default branch state<br/>last shipped tag<br/>commits ahead/behind<br/>working tree<br/>version source<br/>handover metadata<br/>ship readiness<br/>handover readiness"]
+    C --> D["Render STATUS table<br/>Columns: Origin | Local | Status | Action(s)"]
     D --> E{"Choose highest-priority recommendation"}
     E -->|partial workflow state| F["abort"]
     E -->|resume-target mismatch or wrong branch| G["resume"]
@@ -11,12 +11,13 @@ flowchart TD
     E -->|clean branch should be published| J["publish"]
     E -->|unshipped release-ready changes| K["ship"]
     E -->|nothing required| L["none"]
-    F --> M["Return 1 to 3 recommendations\nwith one-line reasons"]
+    F --> M["Return 1 to 3 recommendations<br/>with one-line reasons"]
     G --> M
     H --> M
     I --> M
     J --> M
     K --> M
     L --> M
-    M --> N["Stop\nstatus reports only and never executes actions"]
+    M --> N["Stop<br/>status reports only and never executes actions"]
 ```
+
