@@ -6,6 +6,10 @@ The format is based on Keep a Changelog.
 
 ## [Unreleased]
 
+## [v0.2.7] - 2026-06-23
+
+- Add Mermaid workflow diagrams for all TCTBP triggers under `docs/mermaid/` (abort, branch, checkpoint, deploy, handover, publish, resume, ship, status).
+
 ## [v0.2.6] - 2026-04-13
 
 - Clarify that `status`, `checkpoint`, and `handover` responses must emit their summary tables as standalone Markdown blocks.
