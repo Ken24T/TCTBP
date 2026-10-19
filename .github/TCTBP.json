@@ -31,6 +31,13 @@
     "versioning": {
       "sourceOfTruth": "VERSION",
       "tagFormat": "v{version}"
+    },
+    "developmentPolicy": {
+      "id": "shared-development-policy",
+      "version": "1.0.0",
+      "policyFile": ".github/development-policy.json",
+      "document": ".github/DEVELOPMENT_POLICY.md",
+      "reviewCommand": "node scripts/check-modularity.cjs --changed"
     }
   },
   "activation": {

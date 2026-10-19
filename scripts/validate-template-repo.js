@@ -7,6 +7,9 @@ const repoRoot = path.resolve(__dirname, "..");
 const expectedValidationCommand = "node ./scripts/validate-template-repo.js";
 const expectedReconcileTrigger = "reconcile-tctbp <absolute-target-repo-path>";
 const requiredFiles = [
+  ".github/DEVELOPMENT_POLICY.md",
+  ".github/development-policy.json",
+  "scripts/check-modularity.cjs",
   ".github/workflows/validate-template-repo.yml",
   ".github/agents/TCTBP.agent.md",
   ".github/hooks/tctbp-safety.json",

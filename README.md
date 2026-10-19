@@ -216,3 +216,11 @@ That means:
 - future `ship`, `checkpoint`, `publish`, `handover`, `resume`, `deploy`, `status`, `abort`, and `branch` actions have a repo-specific profile to follow
 
 In practice, this is the cleanest way to onboard Copilot from the start of a new project without making the workflow brittle or overly dependent on a single old repository.
+
+## Shared code and documentation policy
+
+`.github/DEVELOPMENT_POLICY.md` and `.github/development-policy.json` define
+shared-development-policy 1.0.0. Carry both files and
+`scripts/check-modularity.cjs` together into adopting projects. Counts prompt
+review; they do not mandate a split or fail a size-only gate. Agent instructions
+and `profile.developmentPolicy` reference the same policy for code and docs.

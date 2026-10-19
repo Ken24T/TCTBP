@@ -1,5 +1,15 @@
 # TCTBP Agent Template
 
+## Shared code and documentation policy
+
+This repository adopts shared-development-policy 1.0.0. Read
+`.github/DEVELOPMENT_POLICY.md` and its machine-readable companion
+`.github/development-policy.json` for code, configuration and documentation work.
+Use `node scripts/check-modularity.cjs --changed` for advisory size signals.
+Record design reviews for new or materially changed large files in change notes.
+File size alone never requires a split or grants approval to commit or publish.
+Existing correctness, security, Git and approval protections remain in force.
+
 ## Purpose
 
 This agent governs **milestone, checkpointing, publishing, handover, resume, sync, and deployment actions** for a repository that adopts the TCTBP workflow. It exists to safely execute the agreed **TCTBP / SHIP workflow** with strong guard rails, auditability, and human approval at irreversible steps.
