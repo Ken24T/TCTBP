@@ -360,3 +360,13 @@ Repo-specific docs commonly reviewed:
 - Need to recover from partial workflow state: use `abort`
 - Need to close out current work and stop on `main`: use `branch`
 - Need to start the next branch: use `branch <new-branch-name>`
+
+## Shared Begin
+
+Begin is governed by the additive `.github/TCTBP_BEGIN.json` project profile and
+[shared contract](../docs/BEGIN_CONTRACT.md). Run `node scripts/tctbp-run-begin.cjs
+--json` from the selected checkout. Inspect/orient modes and `--no-actions` or
+`--preview` use cached state only. Resume permits a current-branch fast-forward;
+any different branch and every saved-work remote handover retain exact approval.
+The common Begin entry supersedes legacy composite resume/ticket instructions
+for Begin only; other workflows and project-specific guards remain in force.

@@ -1,0 +1,15 @@
+{
+  "schemaVersion": 1,
+  "contract": "tctbp-begin/1",
+  "project": "tctbp",
+  "mode": "orient",
+  "repository": {
+    "remotes": [
+      "https://github.com/Ken24T/TCTBP.git"
+    ]
+  },
+  "data": {
+    "kind": "none"
+  },
+  "runtimeRelease": "6a7317ec9398bbf40d639bc90b3d553ac245980683f9cf1ad2940e481e2fb612"
+}

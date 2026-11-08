@@ -26,6 +26,10 @@ const requiredFiles = [
   "VERSION",
   "CHANGELOG.md"
 ];
+requiredFiles.push(
+  "docs/BEGIN_CONTRACT.md", "packages/begin/cli.cjs", "packages/begin/lib/begin.cjs",
+  "packages/begin/templates/begin/SKILL.md", "scripts/tctbp-run-begin.cjs", ".github/TCTBP_BEGIN.json"
+);
 
 const errors = [];
 
@@ -57,6 +61,10 @@ validateShellWrapper();
 validatePowerShellWrapper();
 validateWorkflow();
 validateCheatsheet();
+const beginProfile = readJson(".github/TCTBP_BEGIN.json", "Begin profile must contain valid JSON.");
+if (beginProfile && beginProfile.runtimeRelease !== require("../packages/begin/lib/begin.cjs").releaseIdentity()) {
+  errors.push("The canonical Begin profile must pin the current core release.");
+}
 
 if (errors.length > 0) {
   for (const error of errors) {

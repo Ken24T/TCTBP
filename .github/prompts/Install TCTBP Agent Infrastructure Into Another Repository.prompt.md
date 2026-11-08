@@ -280,3 +280,21 @@ confirm the other existing skill fields and workflow files are unchanged.
 
 Carry this naming convention into the target repository's AGENTS guidance
 without replacing its existing instructions or adding unsupported workflows.
+
+## Shared Begin distribution
+
+When Begin adoption is in scope, carry the complete pinned `packages/begin` core
+to `scripts/tctbp-begin`, its self-contained `scripts/tctbp-run-begin.cjs` entry,
+conformance fixtures, native skill template, contract and source hash manifest.
+Use `packages/begin/tools/adopt.cjs` only in an isolated authoring worktree with
+an explicit project-owned profile; review the result through the target's normal
+workflow. Preserve existing skill frontmatter and all unrelated YAML fields.
+Do not copy TCTBP's older whole workflow profile over an intentional fork.
+
+Declare inspect/orient/resume and repository identities deliberately. New or
+unsupported contexts default to inspect only. Data and peer adapters are opt-in
+project capabilities, never guessed from a missing file or a generic ticket
+runner. Preserve exact branch-switch and saved-work remote-handover approval,
+all required readiness checks and partial-result evidence. Reconciliation grants
+no data repair, service restart, remote handover, publication or deployment by
+itself; honour any authority already present in the user's active request.

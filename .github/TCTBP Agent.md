@@ -71,6 +71,8 @@ If any invariant fails, the agent must **stop immediately**, explain the failure
 
 Activate this agent only when the user explicitly uses a clear cue, case-insensitive, for example:
 
+- `begin`
+- `begin please`
 - `ship`
 - `ship please`
 - `shipping`
@@ -837,3 +839,13 @@ The agent should prefer a small, accurate doc update over a broad rewrite.
 `.github/TCTBP.json` is the canonical machine-readable reference.
 
 Do not duplicate the full JSON profile in this document. Keep repo-specific values and placeholders in the JSON file, and keep behavioural interpretation here.
+
+## Shared Begin
+
+Begin is governed by the additive `.github/TCTBP_BEGIN.json` project profile and
+[shared contract](../docs/BEGIN_CONTRACT.md). Run `node scripts/tctbp-run-begin.cjs
+--json` from the selected checkout. Inspect/orient modes and `--no-actions` or
+`--preview` use cached state only. Resume permits a current-branch fast-forward;
+any different branch and every saved-work remote handover retain exact approval.
+The common Begin entry supersedes legacy composite resume/ticket instructions
+for Begin only; other workflows and project-specific guards remain in force.

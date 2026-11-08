@@ -106,6 +106,7 @@ For TCTBP activation, workflow order, sync safety, docs-impact checks, versionin
 
 Supported triggers remain:
 
+- `begin`, `begin please`
 - `ship`, `ship please`, `shipping`, `prepare release`
 - `checkpoint`, `checkpoint please`
 - `publish`, `publish please`
