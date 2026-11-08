@@ -5,6 +5,7 @@ const path = require('node:path');
 const { execFileSync } = require('node:child_process');
 const { VERSION, releaseIdentity } = require('../lib/begin.cjs');
 const { hash } = require('../lib/process.cjs');
+const { update } = require('./json-property.cjs');
 const source = path.resolve(__dirname, '..');
 const runtimeFiles = () => ['cli.cjs', 'package.json', ...fs.readdirSync(path.join(source, 'lib')).filter(name => name.endsWith('.cjs')).sort().map(name => `lib/${name}`)];
 
@@ -50,12 +51,16 @@ function adopt(target, profile, { canonical = false, sourceCommit = null } = {})
   write('.github/TCTBP_BEGIN_SOURCE.json', `${JSON.stringify(provenance, null, 2)}\n`);
   const policyPath = path.join(target, '.github/TCTBP.json');
   if (fs.existsSync(policyPath)) {
-    const policy = JSON.parse(fs.readFileSync(policyPath));
+    let policyText = fs.readFileSync(policyPath, 'utf8');
+    const policy = JSON.parse(policyText);
     policy.begin = { contract: 'tctbp-begin/1', executionCommand: 'node scripts/tctbp-run-begin.cjs', profile: '.github/TCTBP_BEGIN.json', owner: 'TCTBP common core; project-owned capabilities' };
     if (policy.activation?.triggers) for (const trigger of ['begin', 'begin please']) {
       if (!policy.activation.triggers.includes(trigger)) policy.activation.triggers.push(trigger);
     }
-    write('.github/TCTBP.json', `${JSON.stringify(policy, null, 2)}\n`);
+    policyText = update(policyText, ['begin'], policy.begin);
+    if (policy.activation?.triggers) policyText = update(policyText, ['activation', 'triggers'], policy.activation.triggers);
+    if (JSON.stringify(JSON.parse(policyText)) !== JSON.stringify(policy)) throw new Error('Scoped policy edit changed unrelated fields.');
+    write('.github/TCTBP.json', policyText);
   }
   return { project: profile.project, mode: profile.mode, release, changed };
 }

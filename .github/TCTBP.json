@@ -10,9 +10,7 @@
     "name": "TCTBP",
     "description": "Canonical template repository for the TCTBP workflow, guard rails, and onboarding guidance.",
     "defaultBranch": "main",
-    "versionFiles": [
-      "VERSION"
-    ],
+    "versionFiles": ["VERSION"],
     "changelogFormat": "keep-a-changelog",
     "locale": "en-AU"
   },
@@ -81,12 +79,7 @@
     }
   },
   "ship": {
-    "preferredTriggers": [
-      "ship",
-      "ship please",
-      "shipping",
-      "prepare release"
-    ],
+    "preferredTriggers": ["ship", "ship please", "shipping", "prepare release"],
     "requireFetchedOriginInPreflight": true,
     "stopIfDetachedHead": true,
     "stopIfBranchMissingUpstream": false,
@@ -98,10 +91,7 @@
     "purpose": "Create a formal shipped version from a clean, fetched branch, allowing first-time publication from a clean unpublished branch while keeping version, tag, and remote state recoverable and unambiguous."
   },
   "publish": {
-    "preferredTriggers": [
-      "publish",
-      "publish please"
-    ],
+    "preferredTriggers": ["publish", "publish please"],
     "requireFetchedOriginInPreflight": true,
     "stopIfDetachedHead": true,
     "requireCleanTree": true,
@@ -113,10 +103,7 @@
     "purpose": "Safely publish the current clean branch to origin, including first publication when no upstream exists yet, without bumping version, creating tags, or updating handover metadata."
   },
   "checkpoint": {
-    "preferredTriggers": [
-      "checkpoint",
-      "checkpoint please"
-    ],
+    "preferredTriggers": ["checkpoint", "checkpoint please"],
     "purpose": "Create a durable local-only checkpoint commit on the current branch so work is preserved without version, tag, metadata, or remote side effects.",
     "stopIfDetachedHead": true,
     "stopIfWorkingTreeClean": true,
@@ -139,108 +126,22 @@
     "reuseDuringHandoverWhenCurrent": true
   },
   "workflow": {
-    "shipOrder": [
-      "preflight",
-      "verify",
-      "problems",
-      "docs-impact",
-      "bump",
-      "commit",
-      "changelog",
-      "tag",
-      "push"
-    ],
-    "publishOrder": [
-      "preflight",
-      "fetch",
-      "report",
-      "verify-gate",
-      "push-if-needed",
-      "verify-sync",
-      "summary"
-    ],
-    "checkpointOrder": [
-      "preflight",
-      "inspect",
-      "stage",
-      "commit",
-      "summary"
-    ],
-    "branchOrder": [
-      "preflight",
-      "assess-ship",
-      "verify-or-stop",
-      "inspect-source-branch",
-      "sync-default-branch",
-      "confirm-merge-into-default-when-needed",
-      "merge-source-into-default-when-needed",
-      "verify-transition",
-      "create-new-branch-when-requested",
-      "optional-cleanup",
-      "summary"
-    ],
-    "handoverOrder": [
-      "preflight",
-      "fetch",
-      "inspect-current-branch",
-      "compare",
-      "stage",
-      "checkpoint-if-needed",
-      "verify-gate",
-      "docs-impact",
-      "commit-if-needed",
-      "reconcile",
-      "push-if-needed",
-      "update-handover-metadata",
-      "verify-sync",
-      "summary"
-    ],
-    "resumeOrder": [
-      "preflight",
-      "fetch",
-      "read-handover-metadata",
-      "determine-target-branch",
-      "classify-preserve-local-need",
-      "preserve-local-if-needed",
-      "switch-target-branch",
-      "reconcile-read-only",
-      "verify-ready-state",
-      "summary"
-    ],
-    "statusOrder": [
-      "fetch",
-      "report",
-      "recommend"
-    ],
-    "abortOrder": [
-      "inspect",
-      "propose",
-      "execute"
-    ],
-    "deployOrder": [
-      "preflight",
-      "sync-prerequisite",
-      "verification-gate",
-      "docs-impact",
-      "runtime-build",
-      "deploy-target",
-      "post-deploy-validation",
-      "summary"
-    ],
-    "requireApproval": [
-      "push"
-    ]
+    "shipOrder": ["preflight", "verify", "problems", "docs-impact", "bump", "commit", "changelog", "tag", "push"],
+    "publishOrder": ["preflight", "fetch", "report", "verify-gate", "push-if-needed", "verify-sync", "summary"],
+    "checkpointOrder": ["preflight", "inspect", "stage", "commit", "summary"],
+    "branchOrder": ["preflight", "assess-ship", "verify-or-stop", "inspect-source-branch", "sync-default-branch", "confirm-merge-into-default-when-needed", "merge-source-into-default-when-needed", "verify-transition", "create-new-branch-when-requested", "optional-cleanup", "summary"],
+    "handoverOrder": ["preflight", "fetch", "inspect-current-branch", "compare", "stage", "checkpoint-if-needed", "verify-gate", "docs-impact", "commit-if-needed", "reconcile", "push-if-needed", "update-handover-metadata", "verify-sync", "summary"],
+    "resumeOrder": ["preflight", "fetch", "read-handover-metadata", "determine-target-branch", "classify-preserve-local-need", "preserve-local-if-needed", "switch-target-branch", "reconcile-read-only", "verify-ready-state", "summary"],
+    "statusOrder": ["fetch", "report", "recommend"],
+    "abortOrder": ["inspect", "propose", "execute"],
+    "deployOrder": ["preflight", "sync-prerequisite", "verification-gate", "docs-impact", "runtime-build", "deploy-target", "post-deploy-validation", "summary"],
+    "requireApproval": ["push"]
   },
   "shipReport": {
     "enabled": true,
     "stage": "preflight",
     "format": "table",
-    "columns": [
-      "Origin",
-      "Local",
-      "Status",
-      "Action(s)"
-    ],
+    "columns": ["Origin", "Local", "Status", "Action(s)"],
     "recommendedRows": [
       "branch-and-upstream",
       "head-commit",
@@ -257,12 +158,7 @@
     "enabled": true,
     "stage": "report",
     "format": "table",
-    "columns": [
-      "Origin",
-      "Local",
-      "Status",
-      "Action(s)"
-    ],
+    "columns": ["Origin", "Local", "Status", "Action(s)"],
     "recommendedRows": [
       "branch-and-upstream",
       "head-commit",
@@ -281,12 +177,7 @@
     "enabled": true,
     "stage": "summary",
     "format": "table",
-    "columns": [
-      "Origin",
-      "Local",
-      "Status",
-      "Action(s)"
-    ],
+    "columns": ["Origin", "Local", "Status", "Action(s)"],
     "recommendedRows": [
       "current-branch-state",
       "last-shipped-tag",
@@ -300,12 +191,7 @@
     "enabled": true,
     "stage": "summary",
     "format": "table",
-    "columns": [
-      "Origin",
-      "Local",
-      "Status",
-      "Action(s)"
-    ],
+    "columns": ["Origin", "Local", "Status", "Action(s)"],
     "recommendedRows": [
       "previous-head-commit",
       "checkpoint-commit",
@@ -359,10 +245,7 @@
     "summaryMustConfirmNoCodeLossGuards": true
   },
   "handover": {
-    "preferredTriggers": [
-      "handover",
-      "handover please"
-    ],
+    "preferredTriggers": ["handover", "handover please"],
     "purpose": "Safely checkpoint and publish the current work branch at end of day, then refresh the handover metadata branch so another machine can resume from a deterministic shared state.",
     "syncScope": "current-work-branch-plus-handover-metadata-and-relevant-tags",
     "metadataBranch": "tctbp/handover-state",
@@ -385,10 +268,7 @@
     "pushTagsWhenPresent": true
   },
   "resume": {
-    "preferredTriggers": [
-      "resume",
-      "resume please"
-    ],
+    "preferredTriggers": ["resume", "resume please"],
     "purpose": "Restore the intended work branch at start of day by consulting handover metadata first, preserving current local unpublished work when a safe branch switch would otherwise strand it, and reconciling only through non-destructive checkout and fast-forward operations.",
     "metadataBranch": "tctbp/handover-state",
     "metadataFile": ".github/TCTBP_STATE.json",
@@ -396,11 +276,7 @@
     "consultMetadataBranchBeforeBranchInference": true,
     "preferMetadataOverCleanNonDefaultBranch": true,
     "currentBranchMayOverrideMetadataOnlyWhenDescendantOfMetadataCommit": true,
-    "excludeBranchesFromCandidateDetection": [
-      "origin/main",
-      "origin/HEAD",
-      "origin/tctbp/handover-state"
-    ],
+    "excludeBranchesFromCandidateDetection": ["origin/main", "origin/HEAD", "origin/tctbp/handover-state"],
     "detectPreserveLocalWorkWhenSwitchWouldStrandChanges": true,
     "preserveLocalWorkBeforeSwitchWhenSafeAndNeeded": true,
     "preserveLocalWorkRequiresExplicitConfirmation": true,
@@ -423,9 +299,7 @@
     "pushNeverDuringResume": true
   },
   "abort": {
-    "preferredTriggers": [
-      "abort"
-    ],
+    "preferredTriggers": ["abort"],
     "requireExplicitApprovalForAllActions": true,
     "requireDoubleConfirmationForHistoryRewrite": true,
     "partialStates": [
@@ -444,15 +318,7 @@
   },
   "statusRecommendations": {
     "enabled": true,
-    "suggestions": [
-      "resume",
-      "checkpoint",
-      "publish",
-      "handover",
-      "ship",
-      "abort",
-      "none"
-    ],
+    "suggestions": ["resume", "checkpoint", "publish", "handover", "ship", "abort", "none"],
     "rules": {
       "resume": "Suggest when the current machine is not yet on the intended handed-over work branch, the metadata points at a different published branch than the current branch, or the safest next action is to restore the last handed-over branch after preserving local unpublished work when needed.",
       "checkpoint": "Suggest when the working tree is dirty and the safest immediate step is to preserve local progress with a local-only non-release commit before continuing or before deciding whether to publish or hand over.",
@@ -464,28 +330,9 @@
     }
   },
   "docsInfraPolicy": {
-    "skipSteps": [
-      "test",
-      "lint"
-    ],
-    "keepSteps": [
-      "preflight",
-      "problems-editor",
-      "docs-impact",
-      "commit",
-      "push"
-    ],
-    "filePatterns": [
-      "*.md",
-      "*.txt",
-      "*.rst",
-      "docs/**",
-      ".github/**",
-      "packaging/**",
-      "LICENSE*",
-      "CHANGELOG*",
-      "CONTRIBUTING*"
-    ],
+    "skipSteps": ["test", "lint"],
+    "keepSteps": ["preflight", "problems-editor", "docs-impact", "commit", "push"],
+    "filePatterns": ["*.md", "*.txt", "*.rst", "docs/**", ".github/**", "packaging/**", "LICENSE*", "CHANGELOG*", "CONTRIBUTING*"],
     "comment": "For docs-only or infrastructure-only changes: skip heavy verification commands, keep editor diagnostics and docs impact assessment."
   },
   "documentation": {
@@ -503,44 +350,23 @@
     "rules": [
       {
         "changeType": "user-visible-feature",
-        "review": [
-          "README.md",
-          ".github/TCTBP Cheatsheet.md",
-          ".github/TCTBP Agent.md"
-        ]
+        "review": ["README.md", ".github/TCTBP Cheatsheet.md", ".github/TCTBP Agent.md"]
       },
       {
         "changeType": "ui-or-interaction",
-        "review": [
-          "README.md",
-          ".github/TCTBP Cheatsheet.md"
-        ]
+        "review": ["README.md", ".github/TCTBP Cheatsheet.md"]
       },
       {
         "changeType": "config-or-settings",
-        "review": [
-          "README.md",
-          ".github/copilot-instructions.md"
-        ]
+        "review": ["README.md", ".github/copilot-instructions.md"]
       },
       {
         "changeType": "packaging-or-metadata",
-        "review": [
-          "README.md",
-          "VERSION",
-          "CHANGELOG.md",
-          "scripts/validate-template-repo.js",
-          "scripts/validate-template-repo.ps1",
-          "scripts/validate-template-repo.sh",
-          ".github/workflows/validate-template-repo.yml"
-        ]
+        "review": ["README.md", "VERSION", "CHANGELOG.md", "scripts/validate-template-repo.js", "scripts/validate-template-repo.ps1", "scripts/validate-template-repo.sh", ".github/workflows/validate-template-repo.yml"]
       },
       {
         "changeType": "roadmap-or-status",
-        "review": [
-          "README.md",
-          ".github/TCTBP Cheatsheet.md"
-        ]
+        "review": ["README.md", ".github/TCTBP Cheatsheet.md"]
       },
       {
         "changeType": "internal-only",
@@ -550,10 +376,7 @@
     "comment": "Also review any design, operational, or roadmap document directly affected by the change. Remove placeholder entries that do not apply."
   },
   "deploy": {
-    "preferredTriggers": [
-      "deploy",
-      "deploy please"
-    ],
+    "preferredTriggers": ["deploy", "deploy please"],
     "purpose": "This repository does not have a runtime deployment target. Deploy should stop unless a future repo-specific deploy profile is added.",
     "stopIfDetachedHead": true,
     "requireCleanTree": true,
@@ -569,9 +392,7 @@
     "patchEveryShip": true,
     "patchEveryShipForDocsInfrastructureOnly": true,
     "minorOnFirstShipOfBranch": true,
-    "minorBranchPrefixes": [
-      "feature/"
-    ],
+    "minorBranchPrefixes": ["feature/"],
     "majorExplicitOnly": true
   },
   "tagging": {
