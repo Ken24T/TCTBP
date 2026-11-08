@@ -37,3 +37,11 @@ test('a publicly writable runtime pointer cannot select a program', t => {
   const f = fixture(t); fs.chmodSync(f.configFile, 0o666); const result = f.run(['--json']);
   assert.equal(result.status, 1); assert.equal(JSON.parse(result.stdout).state, 'BLOCKED');
 });
+test('an inspect-only rollback pin cannot resume through the host launcher', t => {
+  const f = fixture(t), manifest = path.join(f.home, 'release/release.json');
+  const release = JSON.parse(fs.readFileSync(manifest)); release.inspectOnly = true;
+  fs.writeFileSync(manifest, JSON.stringify(release)); f.pointer.manifestSha256 = hash(manifest); f.write();
+  const result = f.run(['--repo', path.join(f.home, 'selected'), '--json']);
+  assert.equal(result.status, 0, result.stderr);
+  assert.deepEqual(JSON.parse(result.stdout).received, ['--repo', path.join(f.home, 'selected'), '--json', '--no-actions']);
+});

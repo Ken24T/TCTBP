@@ -40,7 +40,10 @@ def launch():
     cli = root / 'core/cli.cjs'
     if 'core/cli.cjs' not in release['files']:
         raise ValueError('The installed release has no shared Begin entry.')
-    os.execv(str(node), [str(node), str(cli), *sys.argv[1:]])
+    args = sys.argv[1:]
+    if release.get('inspectOnly') and not any(flag in args for flag in ['--no-actions', '--preview', '--version']):
+        args = [*args, '--no-actions']
+    os.execv(str(node), [str(node), str(cli), *args])
 
 
 if __name__ == '__main__':
