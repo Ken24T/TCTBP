@@ -3,10 +3,10 @@
   "owner": "Ken24T/TCTBP",
   "sourceCommit": null,
   "version": "1.0.0",
-  "release": "18c842373f17fbc87aca2824cd836289f4e54b40d1d85be4a652271028ab18db",
+  "release": "1cd850aeb9b279e4f27ce3bdb6b5a6b2dc60430af6f26196a1c1dae25e2d933c",
   "files": {
     "cli.cjs": "2364bab39a55958f3916ceeb0737ee76cce37e80dda43af0f527397169f50999",
-    "package.json": "3c72f9a85e287e89819790595bddf640b13bf845afaa97c02bc0fccbecef066a",
+    "package.json": "b421ad1df8f8e9a72525136050678a2e70085cc1a036b0f23b1ac294ce6e7315",
     "lib/adapters.cjs": "4ed20bb5c581ddd8abcaffaad83c407ff9cf55efce91ddbb35b32cb86171e1a5",
     "lib/arguments.cjs": "01bde00d4a7cbb0ccb8b5338b5d10d2ecd39087b67892b01a26299ad3a974fd2",
     "lib/begin.cjs": "eec18730092608e250f34fd4da5f7c919395c1a2b8e8a5567d64f0d3aa8af2cc",

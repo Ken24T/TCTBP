@@ -5,6 +5,6 @@
   "description": "Shared, guarded Begin contract for command and skill adapters",
   "engines": { "node": ">=22" },
   "bin": { "tctbp-begin": "cli.cjs" },
-  "scripts": { "test": "node --test test/*.test.cjs" },
+  "scripts": { "test": "node --test test/*.node.cjs" },
   "license": "UNLICENSED"
 }

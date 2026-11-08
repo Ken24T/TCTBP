@@ -30,9 +30,9 @@ known unfinished work. Preserve partial receipts and do not retry blindly.
 
 Dirty work, detached HEAD, Git operations and divergence remain preserved. Begin
 does not checkpoint, stash, reset, rebase or publish. Only declared project data
-adapters may run after fresh pinned Git READY. Missing Intranet manifest or
-physical runtime proof remains BLOCKED; do not manufacture evidence or repair
-the historical ticket hold.
+adapters may run after fresh pinned Git READY. Missing required manifest or
+physical runtime proof remains BLOCKED; do not manufacture evidence, repair data
+or clear a hold by inference.
 
 Repository and user skills with the same name can both appear in selectors.
 This fallback and adopted repository skills use the same pinned core contract;

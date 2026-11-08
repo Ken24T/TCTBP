@@ -44,8 +44,8 @@ or unfinished work plus an unknown peer block. Approval expires on changed
 evidence. Explicit continuation past only-unknown peers retains unverified names.
 No ordinary Begin request approves a remote checkpoint or publication.
 
-Data adapters run only after fresh pinned Git READY. The supported strict
-Intranet adapter must independently verify its physical development bindings and
+Data adapters run only after fresh pinned Git READY. A strict committed-data
+adapter must independently verify its physical development bindings and
 incoming manifest in that exact commit, then use native preview/expected-plan
 apply/final ticket and Git verification. Missing binding/manifest returns BLOCKED
 before invoking native data commands. Settings outcomes remain separate. No
@@ -76,3 +76,21 @@ for this change. The new core has explicit I/O and pure parsing/policy boundarie
 no module imports an application or a DSH SDK. Consumer runtime copies retain
 exact source hashes and conformance fixtures. Shared development policy bytes
 and all unrelated workflow fields remain unchanged.
+
+Run the vendored conformance suite with `npm --prefix scripts/tctbp-begin test`.
+Its `*.node.cjs` files use Node's test runner and stay outside Vitest's default
+test discovery. The canonical package adds adoption and installed-launcher tests.
+
+## Host fallback and discovery
+
+A verified host release may install the pinned `tctbp-begin` launcher and a user
+Begin fallback for repositories without an adopted native entry. Both consume
+the same core/profile contract; missing capabilities permit inspection only.
+Repository and user skills sharing a name can both appear in selectors and are
+not merged ([official skill discovery documentation](https://learn.chatgpt.com/docs/build-skills)).
+Keep source, installed payload and actual loaded registration identities distinct.
+
+Adoption preserves a consumer's older generic activation/catalogue unless that
+surface is deliberately upgraded together. The additive Begin profile and native
+skill/DSH entry provide the command; TCTBP-Web upgrades its complete factory
+catalogue and scaffold inventory together.

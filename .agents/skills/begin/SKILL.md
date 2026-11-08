@@ -38,9 +38,9 @@ recovery target with `skipResume` bypasses normal branch selection.
 
 Data actions are limited to the project's declared adapter after fresh pinned
 Git READY. A project without a data service gets no generic ticket/settings call.
-Intranet requires its committed incoming manifest, verified development bindings
-and final native ticket/Git proofs. Missing evidence is BLOCKED; never invent a
-manifest/baseline or clear a historical hold by inference.
+A guarded data adapter requires its committed incoming manifest, verified runtime
+bindings and final native data/Git proofs. Missing evidence is BLOCKED; never
+invent a manifest/baseline or clear a hold by inference.
 
 Brief the user on current work, verified state, gotchas and a recommended first
 action. Reading the continuation does not authorise executing that next action.

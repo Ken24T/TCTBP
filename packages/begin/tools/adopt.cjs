@@ -28,7 +28,7 @@ function adopt(target, profile, { canonical = false, sourceCommit = null, activa
   if (!canonical) {
     for (const file of runtimeFiles()) write(`scripts/tctbp-begin/${file}`, fs.readFileSync(path.join(source, file)));
     // The same behavioral fixtures travel with the runtime for local conformance checks.
-    for (const file of ['fixture.cjs', 'contract.test.cjs', 'partial-clone.test.cjs']) {
+    for (const file of ['fixture.cjs', 'contract.node.cjs', 'partial-clone.node.cjs']) {
       write(`scripts/tctbp-begin/test/${file}`, fs.readFileSync(path.join(source, 'test', file)));
     }
     write('scripts/tctbp-run-begin.cjs', fs.readFileSync(path.join(source, 'templates/tctbp-run-begin.cjs')));
