@@ -41,6 +41,7 @@ function begin(options, cwd = process.cwd()) {
       report.handoffComplete = false;
       return report;
     }
+    if (profile.peer) report.peers = { state: 'UNVERIFIED', reason: 'Required peer inspection has not returned a verified result.' };
     report.peers = adapters.peers(root, profile, options, report.release);
     if (!['READY', 'UNVERIFIED', 'NOT_APPLICABLE'].includes(report.peers.state)) {
       report.git = { state: 'BLOCKED', reason: 'Peer decision is required before resume.' };
@@ -73,6 +74,7 @@ function begin(options, cwd = process.cwd()) {
     report.state = 'BLOCKED';
     report.handoffComplete = false;
     report.reason = error instanceof Stop ? error.message : 'Begin could not verify its result. Inspect the checkout before continuing.';
+    if (profile?.peer && report.peers.state === 'UNVERIFIED') report.peers = { ...report.peers, state: 'BLOCKED', reason: report.reason };
     if (report.git.state === 'READY') report.git = { ...report.git, state: 'BLOCKED', reason: report.reason };
     // Preserve already-observed adapter evidence, including partial recovery receipts.
     if (root) { try { report.checkout = snapshot(root); } catch {} }

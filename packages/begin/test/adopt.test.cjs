@@ -18,6 +18,7 @@ test('adoption preserves project policy and existing skill metadata while carryi
   const result = adopt(f.checkout, { project: 'fixture', mode: 'orient', repository: { remotes: [f.remote] }, data: { kind: 'none' } }, { sourceCommit: '1'.repeat(40) });
   const actual = JSON.parse(fs.readFileSync(path.join(f.checkout, '.github/TCTBP.json')));
   assert.deepEqual(actual.branchModel, policy.branchModel); assert.deepEqual(actual.profile, policy.profile);
+  assert.deepEqual(actual.activation, policy.activation);
   assert.equal(fs.readFileSync(path.join(f.checkout, '.agents/skills/begin/agents/openai.yaml'), 'utf8'), yaml);
   assert.ok(fs.readFileSync(path.join(f.checkout, '.agents/skills/begin/SKILL.md'), 'utf8').startsWith(header));
   f.write(f.checkout, 'package.json', '{"type":"module"}'); f.commit(f.checkout, 'Adopt isolated common runtime');

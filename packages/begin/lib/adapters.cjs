@@ -30,7 +30,12 @@ function peers(root, profile, options, release) {
     if (JSON.stringify(recorded) !== JSON.stringify(binding)) throw new Stop('Begin release, profile or controller changed; approval expired.');
     args.push(options.recover ? '--recover' : '--continue-published', approval);
   }
-  const result = runJson(root, profile.peer.command, args);
+  let result;
+  try { result = runJson(root, profile.peer.command, args); }
+  catch (error) {
+    return { state: 'BLOCKED', reason: error.message, recoveryAttempted: Boolean(options.recover),
+      partialPossible: Boolean(options.recover), completion: options.recover ? 'UNCONFIRMED: inspect private recovery receipts before retrying.' : 'Peer inspection did not return verified evidence.' };
+  }
   const report = result.report;
   if (report.id && !approval) {
     const filename = bindingFile(report.id);
@@ -46,7 +51,9 @@ function peers(root, profile, options, release) {
     const current = snapshot(root);
     if (state !== 'READY' && state !== 'UNVERIFIED' || !report.target || blocker(current) ||
         current.branch !== report.target.branch || current.head !== report.target.head) {
-      throw new Stop('Peer recovery did not produce its exact verified destination. Preserve its receipts and inspect.');
+      return { ...report, state: 'BLOCKED', status: 'blocked', nativeStatus: report.status,
+        reason: 'Peer recovery did not produce its exact verified destination. Preserve its receipts and inspect.',
+        recoveryAttempted: Boolean(options.recover), partialPossible: true, adapterExit: result.code };
     }
   }
   return { ...report, state, adapterExit: result.code };
@@ -59,8 +66,13 @@ function data(root, profile, options, gitState) {
   const pin = snapshot(root);
   if (pin.branch !== gitState.branch || pin.head !== gitState.head || blocker(pin)) throw new Stop('Git readiness changed before the data adapter.');
   stable(root, pin);
-  const result = runJson(root, profile.data.command,
-    ['--json', '--expected-branch', pin.branch, '--expected-head', pin.head]);
+  let result;
+  try {
+    result = runJson(root, profile.data.command, ['--json', '--expected-branch', pin.branch, '--expected-head', pin.head]);
+  } catch (error) {
+    return { state: 'BLOCKED', reason: error.message, partialPossible: true,
+      completion: 'UNCONFIRMED: the adapter may have completed local steps. Inspect its private receipts before retrying.' };
+  }
   try { stable(root, pin); } catch (error) {
     return { ...result.report, state: 'BLOCKED', reason: error.message, partialPossible: true, adapterExit: result.code };
   }

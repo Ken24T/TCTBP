@@ -241,3 +241,17 @@ test('a branch preview expires when local workflow configuration changes', t => 
   const result = f.run(['--switch-to', 'next-work', '--expected-head', previous, '--expected-target', target, '--expected-context', preview.report.git.approval['expected-context']]);
   assert.equal(result.report.state, 'BLOCKED'); assert.equal(result.report.checkout.branch, 'main');
 });
+
+test('missing adapter evidence cannot imply that a declared data action did nothing', t => {
+  const f = fixture(t, { profile: dataProfile, files: { 'scripts/data.cjs': 'console.log("unparseable after an attempted step");process.exitCode=1;' } });
+  const { report } = f.run();
+  assert.equal(report.data.state, 'BLOCKED'); assert.equal(report.data.partialPossible, true);
+  assert.match(report.data.completion, /UNCONFIRMED/); assert.equal(report.handoffComplete, false);
+});
+
+test('a malformed peer result stays a blocked peer outcome', t => {
+  const f = fixture(t, { profile: peerProfile, files: { 'scripts/peer.cjs': 'console.log("no verified peer JSON");process.exitCode=1;' } });
+  const before = f.fingerprint(), result = f.run();
+  assert.equal(result.report.peers.state, 'BLOCKED'); assert.equal(result.report.peers.recoveryAttempted, false);
+  assert.equal(f.fingerprint(), before);
+});

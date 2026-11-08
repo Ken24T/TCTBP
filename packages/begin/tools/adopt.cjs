@@ -9,7 +9,7 @@ const { update } = require('./json-property.cjs');
 const source = path.resolve(__dirname, '..');
 const runtimeFiles = () => ['cli.cjs', 'package.json', ...fs.readdirSync(path.join(source, 'lib')).filter(name => name.endsWith('.cjs')).sort().map(name => `lib/${name}`)];
 
-function adopt(target, profile, { canonical = false, sourceCommit = null } = {}) {
+function adopt(target, profile, { canonical = false, sourceCommit = null, activateAliases = canonical } = {}) {
   if (!path.isAbsolute(target) || fs.realpathSync(target) !== target) throw new Error('Select the real absolute authoring checkout.');
   const top = execFileSync('git', ['-C', target, 'rev-parse', '--show-toplevel'], { encoding: 'utf8' }).trim();
   if (top !== target) throw new Error('Target must be a Git worktree root.');
@@ -54,11 +54,11 @@ function adopt(target, profile, { canonical = false, sourceCommit = null } = {})
     let policyText = fs.readFileSync(policyPath, 'utf8');
     const policy = JSON.parse(policyText);
     policy.begin = { contract: 'tctbp-begin/1', executionCommand: 'node scripts/tctbp-run-begin.cjs', profile: '.github/TCTBP_BEGIN.json', owner: 'TCTBP common core; project-owned capabilities' };
-    if (policy.activation?.triggers) for (const trigger of ['begin', 'begin please']) {
+    if (activateAliases && policy.activation?.triggers) for (const trigger of ['begin', 'begin please']) {
       if (!policy.activation.triggers.includes(trigger)) policy.activation.triggers.push(trigger);
     }
     policyText = update(policyText, ['begin'], policy.begin);
-    if (policy.activation?.triggers) policyText = update(policyText, ['activation', 'triggers'], policy.activation.triggers);
+    if (activateAliases && policy.activation?.triggers) policyText = update(policyText, ['activation', 'triggers'], policy.activation.triggers);
     if (JSON.stringify(JSON.parse(policyText)) !== JSON.stringify(policy)) throw new Error('Scoped policy edit changed unrelated fields.');
     write('.github/TCTBP.json', policyText);
   }
